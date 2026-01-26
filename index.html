@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;html&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;meta charset="UTF-8"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;title&gt;Claude Forensics Chat&lt;/title&gt;</span></p>
+<p class="p1"><span class="s1">&lt;style&gt;</span></p>
+<p class="p1"><span class="s1">*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}.login-container{width:100%;max-width:400px;background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden}.login-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:24px;text-align:center}.login-header h1{font-size:24px;margin-bottom:8px}.login-form{padding:24px;display:flex;flex-direction:column;gap:16px}.form-group{display:flex;flex-direction:column;gap:8px}label{font-weight:600;color:#333}input{padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit}input:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.1)}button{padding:12px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:16px;transition:transform 0.2s}button:hover{transform:translateY(-2px)}button:disabled{opacity:0.6;cursor:not-allowed}.container{width:100%;max-width:900px;background:white;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;display:flex;flex-direction:column;height:90vh;max-height:700px}.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:24px;text-align:center;display:flex;justify-content:space-between;align-items:center}.header h1{font-size:28px;margin-bottom:0}.header p{opacity:0.9;font-size:14px;margin-top:8px}.logout-btn{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);color:white;cursor:pointer;font-size:14px;transition:background 0.2s}.logout-btn:hover{background:rgba(255,255,255,0.3)}.chat-container{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;background:#f8f9fa}.message{display:flex;gap:12px;animation:slideIn 0.3s ease-out}.message.user{justify-content:flex-end}.message-content{max-width:70%;padding:12px 16px;border-radius:12px;word-wrap:break-word;line-height:1.5}.user .message-content{background:#667eea;color:white;border-bottom-right-radius:4px}.assistant .message-content{background:white;color:#333;border-bottom-left-radius:4px;border:1px solid #e0e0e0}@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.input-area{padding:20px;border-top:1px solid #e0e0e0;background:white;display:flex;gap:12px}.input-group{display:flex;gap:12px;flex:1}input{flex:1;padding:12px 16px;border:1px solid #e0e0e0;border-radius:8px;font-size:14px;font-family:inherit}input:focus{outline:0;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,0.1)}button{padding:12px 24px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:transform 0.2s}button:hover:not(:disabled){transform:translateY(-2px)}button:disabled{opacity:0.6;cursor:not-allowed}.error{background:#fee;color:#c33;padding:12px 16px;border-radius:8px;border-left:4px solid #c33}.loading{display:flex;gap:4px;align-items:center}.loading span{width:8px;height:8px;background:#667eea;border-radius:50%;animation:bounce 1.4s infinite}.loading span:nth-child(2){animation-delay:0.2s}.loading span:nth-child(3){animation-delay:0.4s}@keyframes bounce{0%,80%,100%{transform:scale(1);opacity:0.6}40%{transform:scale(1.2);opacity:1}}.hidden{display:none!important}</span></p>
+<p class="p1"><span class="s1">&lt;/style&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div id="loginSection" class="login-container"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="login-header"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;h1&gt;Claude Forensics Chat&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1">&lt;p&gt;Employee Dashboard&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="login-form"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="form-group"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label for="email"&gt;Email Address&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="email" id="email" placeholder="your.email@example.com"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="form-group"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;label for="password"&gt;Password&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="password" id="password" placeholder="Enter your password"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;button onclick="login()" id="loginBtn"&gt;Sign In&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div id="loginError" class="error hidden"&gt;&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div id="chatSection" class="container hidden"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="header"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;h1&gt;Claude Forensics Chat&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1">&lt;p&gt;Company Dashboard - Powered by AWS Bedrock&lt;/p&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;button class="logout-btn" onclick="logout()"&gt;Logout&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="chat-container" id="chatContainer"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="message assistant"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="message-content"&gt;Welcome! I'm Claude, ready to help. What would you like to know?&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;div class="input-area"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;div class="input-group"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;input type="text" id="messageInput" placeholder="Type your question..." onkeypress="if(event.key==='Enter')sendMessage()"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;button onclick="sendMessage()" id="sendBtn"&gt;Send&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;script&gt;</span></p>
+<p class="p1"><span class="s1">const API_ENDPOINT='https://1rgumjz7d2.execute-api.us-east-2.amazonaws.com/prod';</span></p>
+<p class="p1"><span class="s1">const API_KEY='6OU0AH8w5JsWw6rFtEq35u6CApSORah1XedhKHt2';</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function login(){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const email=document.getElementById('email').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const password=document.getElementById('password').value.trim();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const errorDiv=document.getElementById('loginError');</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>errorDiv.classList.add('hidden');</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if(!email||!password){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>errorDiv.textContent='Please enter email and password';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>errorDiv.classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if(!email.includes('@')){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>errorDiv.textContent='Please enter a valid email address';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>errorDiv.classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>return;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sessionStorage.setItem('userEmail',email);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sessionStorage.setItem('isLoggedIn','true');</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('loginSection').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('chatSection').classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function logout(){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sessionStorage.removeItem('userEmail');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sessionStorage.removeItem('isLoggedIn');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('email').value='';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('password').value='';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('loginSection').classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('chatSection').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function checkLogin(){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if(sessionStorage.getItem('isLoggedIn')==='true'){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('loginSection').classList.add('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('chatSection').classList.remove('hidden');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">async function sendMessage(){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const input=document.getElementById('messageInput');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const message=input.value.trim();</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if(!message)return;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const chatContainer=document.getElementById('chatContainer');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const sendBtn=document.getElementById('sendBtn');</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const userMessageDiv=document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>userMessageDiv.className='message user';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>userMessageDiv.innerHTML='&lt;div class="message-content"&gt;'+escapeHtml(message)+'&lt;/div&gt;';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>chatContainer.appendChild(userMessageDiv);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>input.value='';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sendBtn.disabled=true;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const loadingDiv=document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>loadingDiv.className='message assistant';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>loadingDiv.innerHTML='&lt;div class="loading"&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>chatContainer.appendChild(loadingDiv);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>chatContainer.scrollTop=chatContainer.scrollHeight;</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>try{</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const response=await fetch(API_ENDPOINT,{</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>method:'POST',</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>headers:{'Content-Type':'application/json','x-api-key':API_KEY},</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>body:JSON.stringify({messages:[{role:'user',content:message}]})</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>});</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>if(!response.ok)throw new Error('API Error: '+response.status);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const data=await response.json();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>loadingDiv.remove();</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const assistantDiv=document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>assistantDiv.className='message assistant';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const responseText=data.content||data.message||JSON.stringify(data);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>assistantDiv.innerHTML='&lt;div class="message-content"&gt;'+escapeHtml(responseText)+'&lt;/div&gt;';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>chatContainer.appendChild(assistantDiv);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}catch(error){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>loadingDiv.remove();</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const errorDiv=document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>errorDiv.className='error';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>errorDiv.textContent='Error: '+error.message;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>chatContainer.appendChild(errorDiv);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>sendBtn.disabled=false;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>chatContainer.scrollTop=chatContainer.scrollHeight;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">function escapeHtml(text){</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const div=document.createElement('div');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>div.textContent=text;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return div.innerHTML;</span></p>
+<p class="p1"><span class="s1">}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">window.addEventListener('load',checkLogin);</span></p>
+<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
