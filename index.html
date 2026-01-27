@@ -1,10 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Claude Forensics Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6/dist/amazon-cognito-identity.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -38,6 +39,7 @@
         }
         .login-header p {
             color: #666;
+            font-size: 14px;
         }
         .form-group {
             margin-bottom: 20px;
@@ -60,7 +62,7 @@
             outline: none;
             border-color: #667eea;
         }
-        button {
+        .login-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -72,37 +74,49 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        button:hover {
+        .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
-        .error {
-            color: #e74c3c;
-            text-align: center;
-            margin-top: 15px;
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             display: none;
+            font-size: 14px;
         }
         .chat-container {
             display: none;
             background: white;
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
+            width: 90%;
             max-width: 800px;
             height: 80vh;
             flex-direction: column;
+            overflow: hidden;
         }
         .chat-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
-            border-radius: 16px 16px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .chat-header h1 {
             font-size: 20px;
+        }
+        .chat-header p {
+            font-size: 12px;
+            opacity: 0.9;
         }
         .logout-btn {
             background: rgba(255,255,255,0.2);
@@ -120,6 +134,7 @@
             padding: 12px 16px;
             border-radius: 12px;
             max-width: 80%;
+            line-height: 1.6;
         }
         .message.user {
             background: #667eea;
@@ -130,9 +145,65 @@
             background: #f0f0f0;
             color: #333;
         }
+        .message.assistant h1, .message.assistant h2, .message.assistant h3 {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .message.assistant h1:first-child, .message.assistant h2:first-child, .message.assistant h3:first-child {
+            margin-top: 0;
+        }
+        .message.assistant h1 { font-size: 1.4em; }
+        .message.assistant h2 { font-size: 1.2em; }
+        .message.assistant h3 { font-size: 1.1em; }
+        .message.assistant p {
+            margin-bottom: 12px;
+        }
+        .message.assistant p:last-child {
+            margin-bottom: 0;
+        }
+        .message.assistant ul, .message.assistant ol {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+        .message.assistant li {
+            margin-bottom: 4px;
+        }
+        .message.assistant code {
+            background: #e0e0e0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .message.assistant pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 12px;
+        }
+        .message.assistant pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        .message.assistant strong {
+            font-weight: 600;
+        }
+        .message.assistant em {
+            font-style: italic;
+        }
+        .message.assistant blockquote {
+            border-left: 4px solid #667eea;
+            padding-left: 12px;
+            margin: 12px 0;
+            color: #555;
+        }
         .input-area {
             padding: 20px;
-            border-top: 1px solid #e1e1e1;
+            border-top: 1px solid #eee;
             display: flex;
             gap: 12px;
         }
@@ -148,13 +219,22 @@
             border-color: #667eea;
         }
         .input-area button {
-            width: auto;
             padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .input-area button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
         .loading {
             display: none;
-            text-align: center;
-            padding: 20px;
+            padding: 10px 20px;
         }
         .loading span {
             display: inline-block;
@@ -162,11 +242,11 @@
             height: 8px;
             background: #667eea;
             border-radius: 50%;
-            margin: 0 4px;
-            animation: bounce 1.4s infinite;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out both;
         }
-        .loading span:nth-child(2) { animation-delay: 0.2s; }
-        .loading span:nth-child(3) { animation-delay: 0.4s; }
+        .loading span:nth-child(1) { animation-delay: -0.32s; }
+        .loading span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce {
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
@@ -174,11 +254,12 @@
     </style>
 </head>
 <body>
-    <div id="loginSection" class="login-container">
+    <div class="login-container" id="loginSection">
         <div class="login-header">
             <h1>Claude Forensics Chat</h1>
             <p>Employee Dashboard</p>
         </div>
+        <div class="error-message" id="loginError"></div>
         <div class="form-group">
             <label for="email">Email Address</label>
             <input type="email" id="email" placeholder="your.email@example.com">
@@ -187,17 +268,16 @@
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter your password">
         </div>
-        <button onclick="login()" id="loginBtn">Sign In</button>
-        <div id="loginError" class="error"></div>
+        <button class="login-btn" onclick="login()" id="loginBtn">Sign In</button>
     </div>
 
-    <div id="chatSection" class="chat-container">
+    <div class="chat-container" id="chatSection">
         <div class="chat-header">
             <div>
                 <h1>Claude Forensics Chat</h1>
                 <p>Company Dashboard - Powered by AWS Bedrock</p>
             </div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <button class="login-btn logout-btn" onclick="logout()">Logout</button>
         </div>
         <div class="messages" id="chatContainer">
             <div class="message assistant">Welcome! I'm Claude, ready to help. What would you like to know?</div>
@@ -214,47 +294,108 @@
     <script>
         const API_ENDPOINT = 'https://1rgumjz7d2.execute-api.us-east-2.amazonaws.com/prod/';
         const API_KEY = '6OU0AH8w5JsWw6rFtEq35u6CApSORAh1XedhKHt2';
+        
+        // Cognito configuration
+        const COGNITO_USER_POOL_ID = 'us-east-2_gCTbH7Sek';
+        const COGNITO_CLIENT_ID = '2534i5r2j5kg0ftscmkbj9q7vc';
+        
+        const poolData = {
+            UserPoolId: COGNITO_USER_POOL_ID,
+            ClientId: COGNITO_CLIENT_ID
+        };
+        const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        let currentUser = null;
+
+        // Configure marked for markdown parsing
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
 
         function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
-            
+            const loginBtn = document.getElementById('loginBtn');
+
             if (!email || !password) {
                 errorDiv.textContent = 'Please enter both email and password';
                 errorDiv.style.display = 'block';
                 return;
             }
-            
-            // For demo purposes, accept any login
-            // In production, integrate with AWS Cognito
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('chatSection').style.display = 'flex';
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing in...';
+            errorDiv.style.display = 'none';
+
+            const authenticationData = {
+                Username: email,
+                Password: password
+            };
+            const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+
+            const userData = {
+                Username: email,
+                Pool: userPool
+            };
+            const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+            cognitoUser.authenticateUser(authenticationDetails, {
+                onSuccess: function(result) {
+                    currentUser = cognitoUser;
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('chatSection').style.display = 'flex';
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+                },
+                onFailure: function(err) {
+                    errorDiv.textContent = err.message || 'Authentication failed. Please check your credentials.';
+                    errorDiv.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+                },
+                newPasswordRequired: function(userAttributes, requiredAttributes) {
+                    errorDiv.textContent = 'You need to set a new password. Please contact your administrator.';
+                    errorDiv.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In';
+                }
+            });
         }
 
         function logout() {
+            if (currentUser) {
+                currentUser.signOut();
+            }
+            currentUser = null;
             document.getElementById('chatSection').style.display = 'none';
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
+            document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Welcome! I\\'m Claude, ready to help. What would you like to know?</div>';
+        }
+
+        function formatMessage(text) {
+            return marked.parse(text);
         }
 
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
             if (!message) return;
-            
+
             const chatContainer = document.getElementById('chatContainer');
             const loading = document.getElementById('loading');
-            
-            // Add user message
-            chatContainer.innerHTML += '<div class="message user">' + escapeHtml(message) + '</div>';
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user';
+            userDiv.textContent = message;
+            chatContainer.appendChild(userDiv);
+
             input.value = '';
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-            
-            // Show loading
             loading.style.display = 'block';
-            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
             try {
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
@@ -264,27 +405,47 @@
                     },
                     body: JSON.stringify({ message: message })
                 });
-                
+
                 const data = await response.json();
                 loading.style.display = 'none';
+
+                const assistantDiv = document.createElement('div');
+                assistantDiv.className = 'message assistant';
                 
                 if (data.response) {
-                    chatContainer.innerHTML += '<div class="message assistant">' + escapeHtml(data.response) + '</div>';
+                    assistantDiv.innerHTML = formatMessage(data.response);
                 } else if (data.error) {
-                    chatContainer.innerHTML += '<div class="message assistant">Error: ' + escapeHtml(data.error) + '</div>';
+                    assistantDiv.textContent = 'Error: ' + data.error;
+                } else {
+                    assistantDiv.textContent = 'Sorry, there was an error connecting to the server.';
                 }
+                
+                chatContainer.appendChild(assistantDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
             } catch (error) {
                 loading.style.display = 'none';
-                chatContainer.innerHTML += '<div class="message assistant">Sorry, there was an error connecting to the server.</div>';
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'message assistant';
+                errorDiv.textContent = 'Sorry, there was an error connecting to the server.';
+                chatContainer.appendChild(errorDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
             }
-            
-            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        // Check if user is already logged in
+        const cognitoUser = userPool.getCurrentUser();
+        if (cognitoUser) {
+            cognitoUser.getSession((err, session) => {
+                if (err) {
+                    console.log('Session error:', err);
+                    return;
+                }
+                if (session.isValid()) {
+                    currentUser = cognitoUser;
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('chatSection').style.display = 'flex';
+                }
+            });
         }
     </script>
 </body>
