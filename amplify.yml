@@ -3,9 +3,9 @@ frontend:
   phases:
       build:
             commands:
-            - mkdir -p dist && cp index.html dist/index.html
-                post_build:
-                      commands: []
+                    - mkdir -p dist && cp index.html dist/index.html
+                        post_build:
+                              commands: []
                                 artifacts:
                                     baseDirectory: dist/
                                         files:
