@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#6b8f7a 0%,#4a6b5a 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
     .login-container,.password-change-container{background:#fff;padding:40px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:400px}
     .password-change-container{display:none}
     .login-header{text-align:center;margin-bottom:30px}
@@ -16,22 +16,22 @@
     .form-group{margin-bottom:20px}
     .form-group label{display:block;margin-bottom:8px;color:#333;font-weight:500}
     .form-group input{width:100%;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px;transition:border-color .3s}
-    .form-group input:focus{outline:none;border-color:#667eea}
-    button{width:100%;padding:14px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s}
-    button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(102,126,234,.4)}
+    .form-group input:focus{outline:none;border-color:#6b8f7a}
+    button{width:100%;padding:14px;background:linear-gradient(135deg,#6b8f7a 0%,#4a6b5a 100%);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s}
+    button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(107,143,122,.4)}
     button:disabled{opacity:.6;cursor:not-allowed;transform:none}
     .error{color:#e74c3c;text-align:center;margin-top:15px;display:none}
     .info{color:#3498db;text-align:center;margin-bottom:20px;font-size:14px}
     .back-link{text-align:center;margin-top:15px}
-    .back-link a{color:#667eea;text-decoration:none;font-size:14px}
+    .back-link a{color:#6b8f7a;text-decoration:none;font-size:14px}
     .chat-container{display:none;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:900px;height:85vh;flex-direction:column}
-    .chat-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
+    .chat-header{background:linear-gradient(135deg,#6b8f7a 0%,#4a6b5a 100%);color:#fff;padding:20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
     .chat-header h1{font-size:20px}
     .user-info{font-size:12px;opacity:.9;margin-top:4px}
     .logout-btn{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:6px;width:auto}
     .messages{flex:1;overflow-y:auto;padding:20px}
     .message{margin-bottom:16px;padding:16px;border-radius:12px;max-width:85%}
-    .message.user{background:#667eea;color:#fff;margin-left:auto}
+    .message.user{background:#6b8f7a;color:#fff;margin-left:auto}
     .message.assistant{background:#f5f5f5;color:#333;line-height:1.6}
     .message.assistant h1,.message.assistant h2,.message.assistant h3{margin:16px 0 8px;color:#333}
     .message.assistant p{margin:12px 0}
@@ -42,25 +42,25 @@
     .message.assistant pre{background:#2d2d2d;color:#f8f8f2;padding:16px;border-radius:8px;overflow-x:auto;margin:12px 0}
     .message.assistant pre code{background:none;padding:0;color:inherit}
     .message.system{background:#e8f4fd;color:#1a73e8;font-size:13px;padding:8px 12px;border-radius:8px;text-align:center;max-width:100%;font-style:italic}
-    .message.user.auto-sent{background:#8b9cf7;font-size:13px}
+    .message.user.auto-sent{background:#8aab96;font-size:13px}
     .toolbar{padding:12px 20px;border-top:1px solid #e1e1e1;background:#fafafa;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .toolbar-group{display:flex;gap:8px;align-items:center}
     .toolbar-label{font-size:13px;font-weight:600;color:#555}
     .toolbar button{width:auto;padding:8px 16px;font-size:13px;border-radius:6px}
-    .toolbar button.primary-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+    .toolbar button.primary-btn{background:linear-gradient(135deg,#6b8f7a 0%,#4a6b5a 100%)}
     .toolbar button.success-btn{background:linear-gradient(135deg,#28a745 0%,#218838 100%)}
     .toolbar button.reset-btn{background:#dc3545;padding:8px 12px}
     .toolbar select{padding:8px 12px;border:2px solid #e1e1e1;border-radius:6px;font-size:13px;background:#fff;cursor:pointer}
-    .toolbar select:focus{outline:none;border-color:#667eea}
+    .toolbar select:focus{outline:none;border-color:#6b8f7a}
     .status-badge{font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600}
     .status-badge.active{background:#d4edda;color:#155724}
     .status-badge.inactive{background:#f8d7da;color:#721c24}
     .input-area{padding:20px;border-top:1px solid #e1e1e1;display:flex;gap:12px}
     .input-area input{flex:1;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px}
-    .input-area input:focus{outline:none;border-color:#667eea}
+    .input-area input:focus{outline:none;border-color:#6b8f7a}
     .input-area button{width:auto;padding:12px 24px}
     .loading{display:none;text-align:center;padding:20px}
-    .loading span{display:inline-block;width:8px;height:8px;background:#667eea;border-radius:50%;margin:0 4px;animation:bounce 1.4s infinite}
+    .loading span{display:inline-block;width:8px;height:8px;background:#6b8f7a;border-radius:50%;margin:0 4px;animation:bounce 1.4s infinite}
     .loading span:nth-child(2){animation-delay:.2s}
     .loading span:nth-child(3){animation-delay:.4s}
     @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
@@ -68,7 +68,7 @@
 </head>
 <body>
   <div id="loginSection" class="login-container">
-    <div class="login-header"><h1>Claude Forensics Chat</h1><p>Employee Dashboard</p></div>
+    <div class="login-header"><img src="https://fifthavenueforensics.com/wp-content/uploads/2023/10/Fifth-Avenue-Forensics-Logo_Trans_Color.png" alt="Fifth Avenue Forensics" style="max-width:260px;margin-bottom:12px"><p>Forensic Report Assistant</p></div>
     <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" placeholder="your.email@example.com"></div>
     <div class="form-group"><label for="password">Password</label><input type="password" id="password" placeholder="Enter your password"></div>
     <button onclick="login()" id="loginBtn">Sign In</button>
@@ -87,7 +87,7 @@
 
   <div id="chatSection" class="chat-container">
     <div class="chat-header">
-      <div><h1>Claude Forensics Chat</h1><p class="user-info" id="userEmail"></p></div>
+      <div><img src="https://fifthavenueforensics.com/wp-content/uploads/2023/10/Fifth-Avenue-Forensics-Logo_Trans_Color.png" alt="Fifth Avenue Forensics" style="height:36px;filter:brightness(0) invert(1)"><p class="user-info" id="userEmail"></p></div>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
     <div class="messages" id="chatContainer">
