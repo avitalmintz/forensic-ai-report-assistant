@@ -6,64 +6,64 @@
   <title>Claude Forensics Chat</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
-.login-container,.password-change-container{background:#fff;padding:40px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:400px}
-.password-change-container{display:none}
-.login-header{text-align:center;margin-bottom:30px}
-.login-header h1{color:#333;font-size:24px;margin-bottom:8px}
-.login-header p{color:#666}
-.form-group{margin-bottom:20px}
-.form-group label{display:block;margin-bottom:8px;color:#333;font-weight:500}
-.form-group input{width:100%;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px;transition:border-color .3s}
-.form-group input:focus{outline:none;border-color:#667eea}
-button{width:100%;padding:14px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s}
-button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(102,126,234,.4)}
-button:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.error{color:#e74c3c;text-align:center;margin-top:15px;display:none}
-.info{color:#3498db;text-align:center;margin-bottom:20px;font-size:14px}
-.back-link{text-align:center;margin-top:15px}
-.back-link a{color:#667eea;text-decoration:none;font-size:14px}
-.chat-container{display:none;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:900px;height:85vh;flex-direction:column}
-.chat-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
-.chat-header h1{font-size:20px}
-.user-info{font-size:12px;opacity:.9;margin-top:4px}
-.logout-btn{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:6px;width:auto}
-.messages{flex:1;overflow-y:auto;padding:20px}
-.message{margin-bottom:16px;padding:16px;border-radius:12px;max-width:85%}
-.message.user{background:#667eea;color:#fff;margin-left:auto}
-.message.assistant{background:#f5f5f5;color:#333;line-height:1.6}
-.message.assistant h1,.message.assistant h2,.message.assistant h3{margin:16px 0 8px;color:#333}
-.message.assistant p{margin:12px 0}
-.message.assistant ul,.message.assistant ol{margin:12px 0;padding-left:24px}
-.message.assistant li{margin:6px 0}
-.message.assistant strong{font-weight:600}
-.message.assistant code{background:#e8e8e8;padding:2px 6px;border-radius:4px;font-family:monospace}
-.message.assistant pre{background:#2d2d2d;color:#f8f8f2;padding:16px;border-radius:8px;overflow-x:auto;margin:12px 0}
-.message.assistant pre code{background:none;padding:0;color:inherit}
-.message.system{background:#e8f4fd;color:#1a73e8;font-size:13px;padding:8px 12px;border-radius:8px;text-align:center;max-width:100%;font-style:italic}
-.message.user.auto-sent{background:#8b9cf7;font-size:13px}
-.toolbar{padding:12px 20px;border-top:1px solid #e1e1e1;background:#fafafa;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.toolbar-group{display:flex;gap:8px;align-items:center}
-.toolbar-label{font-size:13px;font-weight:600;color:#555}
-.toolbar button{width:auto;padding:8px 16px;font-size:13px;border-radius:6px}
-.toolbar button.primary-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
-.toolbar button.success-btn{background:linear-gradient(135deg,#28a745 0%,#218838 100%)}
-.toolbar button.reset-btn{background:#dc3545;padding:8px 12px}
-.toolbar select{padding:8px 12px;border:2px solid #e1e1e1;border-radius:6px;font-size:13px;background:#fff;cursor:pointer}
-.toolbar select:focus{outline:none;border-color:#667eea}
-.status-badge{font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600}
-.status-badge.active{background:#d4edda;color:#155724}
-.status-badge.inactive{background:#f8d7da;color:#721c24}
-.input-area{padding:20px;border-top:1px solid #e1e1e1;display:flex;gap:12px}
-.input-area input{flex:1;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px}
-.input-area input:focus{outline:none;border-color:#667eea}
-.input-area button{width:auto;padding:12px 24px}
-.loading{display:none;text-align:center;padding:20px}
-.loading span{display:inline-block;width:8px;height:8px;background:#667eea;border-radius:50%;margin:0 4px;animation:bounce 1.4s infinite}
-.loading span:nth-child(2){animation-delay:.2s}
-.loading span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .login-container,.password-change-container{background:#fff;padding:40px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:400px}
+    .password-change-container{display:none}
+    .login-header{text-align:center;margin-bottom:30px}
+    .login-header h1{color:#333;font-size:24px;margin-bottom:8px}
+    .login-header p{color:#666}
+    .form-group{margin-bottom:20px}
+    .form-group label{display:block;margin-bottom:8px;color:#333;font-weight:500}
+    .form-group input{width:100%;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px;transition:border-color .3s}
+    .form-group input:focus{outline:none;border-color:#667eea}
+    button{width:100%;padding:14px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s}
+    button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(102,126,234,.4)}
+    button:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .error{color:#e74c3c;text-align:center;margin-top:15px;display:none}
+    .info{color:#3498db;text-align:center;margin-bottom:20px;font-size:14px}
+    .back-link{text-align:center;margin-top:15px}
+    .back-link a{color:#667eea;text-decoration:none;font-size:14px}
+    .chat-container{display:none;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:900px;height:85vh;flex-direction:column}
+    .chat-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
+    .chat-header h1{font-size:20px}
+    .user-info{font-size:12px;opacity:.9;margin-top:4px}
+    .logout-btn{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:6px;width:auto}
+    .messages{flex:1;overflow-y:auto;padding:20px}
+    .message{margin-bottom:16px;padding:16px;border-radius:12px;max-width:85%}
+    .message.user{background:#667eea;color:#fff;margin-left:auto}
+    .message.assistant{background:#f5f5f5;color:#333;line-height:1.6}
+    .message.assistant h1,.message.assistant h2,.message.assistant h3{margin:16px 0 8px;color:#333}
+    .message.assistant p{margin:12px 0}
+    .message.assistant ul,.message.assistant ol{margin:12px 0;padding-left:24px}
+    .message.assistant li{margin:6px 0}
+    .message.assistant strong{font-weight:600}
+    .message.assistant code{background:#e8e8e8;padding:2px 6px;border-radius:4px;font-family:monospace}
+    .message.assistant pre{background:#2d2d2d;color:#f8f8f2;padding:16px;border-radius:8px;overflow-x:auto;margin:12px 0}
+    .message.assistant pre code{background:none;padding:0;color:inherit}
+    .message.system{background:#e8f4fd;color:#1a73e8;font-size:13px;padding:8px 12px;border-radius:8px;text-align:center;max-width:100%;font-style:italic}
+    .message.user.auto-sent{background:#8b9cf7;font-size:13px}
+    .toolbar{padding:12px 20px;border-top:1px solid #e1e1e1;background:#fafafa;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .toolbar-group{display:flex;gap:8px;align-items:center}
+    .toolbar-label{font-size:13px;font-weight:600;color:#555}
+    .toolbar button{width:auto;padding:8px 16px;font-size:13px;border-radius:6px}
+    .toolbar button.primary-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+    .toolbar button.success-btn{background:linear-gradient(135deg,#28a745 0%,#218838 100%)}
+    .toolbar button.reset-btn{background:#dc3545;padding:8px 12px}
+    .toolbar select{padding:8px 12px;border:2px solid #e1e1e1;border-radius:6px;font-size:13px;background:#fff;cursor:pointer}
+    .toolbar select:focus{outline:none;border-color:#667eea}
+    .status-badge{font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600}
+    .status-badge.active{background:#d4edda;color:#155724}
+    .status-badge.inactive{background:#f8d7da;color:#721c24}
+    .input-area{padding:20px;border-top:1px solid #e1e1e1;display:flex;gap:12px}
+    .input-area input{flex:1;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px}
+    .input-area input:focus{outline:none;border-color:#667eea}
+    .input-area button{width:auto;padding:12px 24px}
+    .loading{display:none;text-align:center;padding:20px}
+    .loading span{display:inline-block;width:8px;height:8px;background:#667eea;border-radius:50%;margin:0 4px;animation:bounce 1.4s infinite}
+    .loading span:nth-child(2){animation-delay:.2s}
+    .loading span:nth-child(3){animation-delay:.4s}
+    @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
   </style>
 </head>
 <body>
@@ -74,6 +74,7 @@ button:disabled{opacity:.6;cursor:not-allowed;transform:none}
     <button onclick="login()" id="loginBtn">Sign In</button>
     <div id="loginError" class="error"></div>
   </div>
+
   <div id="passwordChangeSection" class="password-change-container">
     <div class="login-header"><h1>Set New Password</h1><p>Your temporary password has expired</p></div>
     <p class="info">Please create a new password to continue.</p>
@@ -83,6 +84,7 @@ button:disabled{opacity:.6;cursor:not-allowed;transform:none}
     <div id="passwordError" class="error"></div>
     <div class="back-link"><a href="#" onclick="backToLogin()">Back to Login</a></div>
   </div>
+
   <div id="chatSection" class="chat-container">
     <div class="chat-header">
       <div><h1>Claude Forensics Chat</h1><p class="user-info" id="userEmail"></p></div>
@@ -113,6 +115,111 @@ button:disabled{opacity:.6;cursor:not-allowed;transform:none}
       <button onclick="sendMessage()">Send</button>
     </div>
   </div>
+  <script type="text/plain" id="base-prompt-data">You are a report-writing assistant for Mental Health Court forensic evaluations. Your role is to convert standardized evaluation notes into a completed court report that matches the structure, section order, tone, and narrative style of the example reports I will provide.
+
+This process will occur across multiple messages. First, I will provide one or more example reports. These examples exist only to demonstrate formatting, organization, section headers, writing style, and tone. You should not extract facts, diagnoses, conclusions, recommendations, or reasoning from them, and you should not begin drafting the report at this stage.
+
+After the examples, I will provide the standardized evaluation notes using a fixed template. These notes are the only source of content for the report. Every factual statement in the report must be directly traceable to the notes.
+
+You must not begin writing the report until the standardized notes are provided.
+
+Do not add, infer, interpret, or supplement any information. Do not generate new diagnoses, risk factors, recommendations, or opinions. Your task is strictly to translate and format what already exists in the notes into the court's standard report style.
+
+You may synthesize and organize information already contained in the notes into clear narrative paragraphs, but you may not introduce any new factual content or evaluative reasoning.
+
+All historical and background information must be written using appropriate forensic attribution language. Information derived from self-report must be framed using phrases such as "the examinee reported," "he stated," "she described," or similar language. Information derived from records must be attributed using phrases such as "according to available records," or similar language if specified in the notes. Do not present historical information as an independently verified fact unless the notes explicitly indicate that it is documented in records. Use varied but professionally appropriate attribution language and avoid repetitive phrasing.
+
+If information is expected based on the example report format but is missing from the notes, insert a bold placeholder exactly as INSERT ___ HERE rather than filling in or guessing. If it is unclear whether information comes from self-report or records, insert INSERT SOURCE HERE.
+
+When you write the report, begin directly with the RELEVANT HISTORY section.
+
+The report must follow this exact section order:
+
+RELEVANT HISTORY
+THE INSTANT OFFENSE(S)
+MENTAL STATUS EXAMINATION
+RISK ASSESSMENT
+
+
+RELEVANT HISTORY
+
+This section should be written as a sequence of narrative paragraphs that consolidate the standardized notes in the following general order, using only information provided in the notes and omitting entire paragraphs if unsupported:
+
+demographic information and living situation
+
+family background and childhood experiences
+
+educational history
+
+occupational history
+
+substance use history and treatment
+
+mental health history and treatment
+
+medical history
+
+prior criminal justice involvement and history of violence
+
+All content must be attributed appropriately using forensic distancing language.
+
+If the notes include a separate review of psychiatric or medical records, include a subsection titled:
+
+REVIEW OF AVAILABLE PSYCHIATRIC RECORDS
+
+If no such content appears in the notes, omit this subsection entirely.
+
+
+
+THE INSTANT OFFENSE(S)
+
+This section should present the alleged conduct first as described in the criminal complaint or other records, using appropriate attribution language. This should be followed by the examinee's account of the incident(s), clearly attributed to self-report.
+
+Discussion of mental state at the time of the offense, motivation or intent, remorse, or willingness to plead guilty or participate in treatment should appear only if explicitly documented in the notes. If any of these elements are missing, insert the appropriate bold placeholder.
+
+Do not speculate or interpret beyond what is written in the notes.
+
+
+
+MENTAL STATUS EXAMINATION
+
+This section should be written as a narrative paragraph in the same style as the examples. It should cover:
+
+appearance and behavior
+
+alertness and orientation
+
+mood and affect
+
+speech and language
+
+thought processes and content
+
+psychotic symptoms if present
+
+suicidal or homicidal ideation
+
+insight and judgment
+
+understanding of legal proceedings
+
+Only include domains that are present in the notes. If a domain is absent, insert INSERT [DOMAIN] HERE.
+
+
+
+RISK ASSESSMENT
+
+This section should begin with the standard explanatory paragraph used in the example reports describing the purpose and limits of risk assessment. This boilerplate language is permitted.
+
+Following this paragraph, list aggravating and mitigating factors exactly as they appear in the notes. Do not add or infer any factors. If these lists are missing, insert INSERT AGGRAVATING FACTORS HERE or INSERT MITIGATING FACTORS HERE as appropriate.
+
+
+
+Do not invent or complete the signature block. If signature information is missing from the notes, insert INSERT SIGNATURE BLOCK HERE.
+
+When the time comes to produce the report, output only the report text. Do not include commentary, explanations, or meta-language.
+
+If you have not yet received the standardized notes, do nothing except acknowledge receipt of the example reports. Do not outline, summarize, paraphrase, or draft any portion of the report until the notes are provided.</script>
   <script type="text/plain" id="schiz-ex-1">Here is Example Report 1 for formatting reference:
 
 KINGS COUNTY MENTAL HEALTH COURT
@@ -753,7 +860,7 @@ Licensed Clinical Psychologist</script>
     let examplesSent = false;
     let isSending = false;
 
-    // Base prompt stored as a constant
+    // Load base prompt from hidden script tag (it's above this script in the DOM so it exists)
     const BASE_PROMPT = document.getElementById('base-prompt-data') ? document.getElementById('base-prompt-data').textContent : '';
 
     // Load examples from hidden script tags
@@ -797,14 +904,40 @@ Licensed Clinical Psychologist</script>
       const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({ Username: email, Password: password });
       const cognitoUser = new AmazonCognitoIdentity.CognitoUser({ Username: email, Pool: userPool });
       cognitoUser.authenticateUser(authDetails, {
-        onSuccess: function(result) { currentUser = cognitoUser; idToken = result.getIdToken().getJwtToken(); loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; showChat(email); },
-        onFailure: function(err) { loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; errorDiv.textContent = err.message || 'Authentication failed'; errorDiv.style.display = 'block'; },
-        newPasswordRequired: function(userAttributes) { cognitoUserForPasswordChange = cognitoUser; delete userAttributes.email_verified; delete userAttributes.email; userAttributesForPasswordChange = userAttributes; loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; showPasswordChangeSection(); }
+        onSuccess: function(result) {
+          currentUser = cognitoUser;
+          idToken = result.getIdToken().getJwtToken();
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Sign In';
+          showChat(email);
+        },
+        onFailure: function(err) {
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Sign In';
+          errorDiv.textContent = err.message || 'Authentication failed';
+          errorDiv.style.display = 'block';
+        },
+        newPasswordRequired: function(userAttributes) {
+          cognitoUserForPasswordChange = cognitoUser;
+          delete userAttributes.email_verified;
+          delete userAttributes.email;
+          userAttributesForPasswordChange = userAttributes;
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Sign In';
+          showPasswordChangeSection();
+        }
       });
     }
 
-    function showPasswordChangeSection() { document.getElementById('loginSection').style.display = 'none'; document.getElementById('passwordChangeSection').style.display = 'block'; }
-    function backToLogin() { document.getElementById('passwordChangeSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; }
+    function showPasswordChangeSection() {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('passwordChangeSection').style.display = 'block';
+    }
+
+    function backToLogin() {
+      document.getElementById('passwordChangeSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'block';
+    }
 
     function completeNewPassword() {
       const newPw = document.getElementById('newPassword').value;
@@ -813,18 +946,52 @@ Licensed Clinical Psychologist</script>
       const btn = document.getElementById('changePasswordBtn');
       if (!newPw || !confirmPw) { errorDiv.textContent = 'Please fill in both fields'; errorDiv.style.display = 'block'; return; }
       if (newPw !== confirmPw) { errorDiv.textContent = 'Passwords do not match'; errorDiv.style.display = 'block'; return; }
-      btn.disabled = true; btn.textContent = 'Setting password...';
+      btn.disabled = true;
+      btn.textContent = 'Setting password...';
       cognitoUserForPasswordChange.completeNewPasswordChallenge(newPw, userAttributesForPasswordChange, {
-        onSuccess: function(result) { currentUser = cognitoUserForPasswordChange; idToken = result.getIdToken().getJwtToken(); btn.disabled = false; btn.textContent = 'Set Password'; document.getElementById('passwordChangeSection').style.display = 'none'; showChat(cognitoUserForPasswordChange.getUsername()); },
-        onFailure: function(err) { btn.disabled = false; btn.textContent = 'Set Password'; errorDiv.textContent = err.message; errorDiv.style.display = 'block'; }
+        onSuccess: function(result) {
+          currentUser = cognitoUserForPasswordChange;
+          idToken = result.getIdToken().getJwtToken();
+          btn.disabled = false;
+          btn.textContent = 'Set Password';
+          document.getElementById('passwordChangeSection').style.display = 'none';
+          showChat(cognitoUserForPasswordChange.getUsername());
+        },
+        onFailure: function(err) {
+          btn.disabled = false;
+          btn.textContent = 'Set Password';
+          errorDiv.textContent = err.message;
+          errorDiv.style.display = 'block';
+        }
       });
     }
 
-    function showChat(email) { document.getElementById('loginSection').style.display = 'none'; document.getElementById('chatSection').style.display = 'flex'; document.getElementById('userEmail').textContent = 'Logged in as: ' + email; conversationHistory = []; updateToolbarStatus(); }
+    function showChat(email) {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('chatSection').style.display = 'flex';
+      document.getElementById('userEmail').textContent = 'Logged in as: ' + email;
+      conversationHistory = [];
+      updateToolbarStatus();
+    }
 
-    function logout() { if (currentUser) currentUser.signOut(); currentUser = null; idToken = null; conversationHistory = []; basePromptSent = false; examplesSent = false; updateToolbarStatus(); document.getElementById('chatSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Welcome! Use the toolbar below to set up your session.</div>'; document.getElementById('diagnosisSelect').value = ''; }
+    function logout() {
+      if (currentUser) currentUser.signOut();
+      currentUser = null; idToken = null; conversationHistory = [];
+      basePromptSent = false; examplesSent = false;
+      updateToolbarStatus();
+      document.getElementById('chatSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'block';
+      document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Welcome! Use the toolbar below to set up your session.</div>';
+      document.getElementById('diagnosisSelect').value = '';
+    }
 
-    function resetConversation() { conversationHistory = []; basePromptSent = false; examplesSent = false; updateToolbarStatus(); document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Session reset. Use the toolbar to start again.</div>'; document.getElementById('diagnosisSelect').value = ''; }
+    function resetConversation() {
+      conversationHistory = [];
+      basePromptSent = false; examplesSent = false;
+      updateToolbarStatus();
+      document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Session reset. Use the toolbar to start again.</div>';
+      document.getElementById('diagnosisSelect').value = '';
+    }
 
     function updateToolbarStatus() {
       document.getElementById('basePromptStatus').textContent = basePromptSent ? 'Sent' : 'Not Sent';
@@ -837,6 +1004,7 @@ Licensed Clinical Psychologist</script>
 
     async function insertBasePrompt() {
       if (basePromptSent || isSending) return;
+      if (!BASE_PROMPT) { alert('Error: Base prompt data not found.'); return; }
       await sendProgrammaticMessage(BASE_PROMPT, 'Base prompt sent');
       basePromptSent = true;
       updateToolbarStatus();
@@ -849,14 +1017,12 @@ Licensed Clinical Psychologist</script>
       if (!basePromptSent) { alert('Please insert the base prompt first (Step 1).'); return; }
       const examples = EXAMPLES_DATA[diagnosis];
       if (!examples || examples.length === 0) { alert('No examples found for this diagnosis.'); return; }
-      for (let i = 0; i < examples.length; i++) {
-        const label = 'Example ' + (i + 1) + ' of ' + examples.length;
-        await sendProgrammaticMessage(examples[i], label + ' sent');
-      }
+      // Combine ALL examples into ONE message
+      const combined = examples.join('\n\n---\n\n');
+      await sendProgrammaticMessage(combined, examples.length + ' example reports sent as one message');
       examplesSent = true;
       updateToolbarStatus();
     }
-
     async function sendProgrammaticMessage(text, statusLabel) {
       if (!currentUser || !idToken) { alert('Session expired.'); logout(); return; }
       isSending = true;
@@ -878,7 +1044,11 @@ Licensed Clinical Psychologist</script>
       chatContainer.appendChild(assistantDiv);
       let fullText = '';
       try {
-        const response = await fetch(STREAM_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': idToken }, body: JSON.stringify({ message: text, conversationHistory: conversationHistory }) });
+        const response = await fetch(STREAM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': idToken },
+          body: JSON.stringify({ message: text, conversationHistory: conversationHistory })
+        });
         loading.style.display = 'none';
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -928,7 +1098,11 @@ Licensed Clinical Psychologist</script>
       chatContainer.appendChild(assistantDiv);
       let fullText = '';
       try {
-        const response = await fetch(STREAM_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': idToken }, body: JSON.stringify({ message: message, conversationHistory: conversationHistory }) });
+        const response = await fetch(STREAM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': idToken },
+          body: JSON.stringify({ message: message, conversationHistory: conversationHistory })
+        });
         loading.style.display = 'none';
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -956,86 +1130,5 @@ Licensed Clinical Psychologist</script>
       isSending = false;
     }
   </script>
-  <script type="text/plain" id="base-prompt-data">You are a report-writing assistant for Mental Health Court forensic evaluations. Your role is to convert standardized evaluation notes into a completed court report that matches the structure, section order, tone, and narrative style of the example reports I will provide.
-
-This process will occur across multiple messages. First, I will provide one or more example reports. These examples exist only to demonstrate formatting, organization, section headers, writing style, and tone. You should not extract facts, diagnoses, conclusions, recommendations, or reasoning from them, and you should not begin drafting the report at this stage.
-
-After the examples, I will provide the standardized evaluation notes using a fixed template. These notes are the only source of content for the report. Every factual statement in the report must be directly traceable to the notes.
-
-You must not begin writing the report until the standardized notes are provided.
-
-Do not add, infer, interpret, or supplement any information. Do not generate new diagnoses, risk factors, recommendations, or opinions. Your task is strictly to translate and format what already exists in the notes into the court's standard report style.
-
-You may synthesize and organize information already contained in the notes into clear narrative paragraphs, but you may not introduce any new factual content or evaluative reasoning.
-
-All historical and background information must be written using appropriate forensic attribution language. Information derived from self-report must be framed using phrases such as "the examinee reported," "he stated," "she described," or similar language. Information derived from records must be attributed using phrases such as "according to available records," or similar language if specified in the notes. Do not present historical information as an independently verified fact unless the notes explicitly indicate that it is documented in records. Use varied but professionally appropriate attribution language and avoid repetitive phrasing.
-
-If information is expected based on the example report format but is missing from the notes, insert a bold placeholder exactly as INSERT ___ HERE rather than filling in or guessing. If it is unclear whether information comes from self-report or records, insert INSERT SOURCE HERE.
-
-When you write the report, begin directly with the RELEVANT HISTORY section.
-
-The report must follow this exact section order:
-
-RELEVANT HISTORY
-THE INSTANT OFFENSE(S)
-MENTAL STATUS EXAMINATION
-RISK ASSESSMENT
-
-RELEVANT HISTORY
-
-This section should be written as a sequence of narrative paragraphs that consolidate the standardized notes in the following general order, using only information provided in the notes and omitting entire paragraphs if unsupported:
-
-demographic information and living situation
-family background and childhood experiences
-educational history
-occupational history
-substance use history and treatment
-mental health history and treatment
-medical history
-prior criminal justice involvement and history of violence
-
-All content must be attributed appropriately using forensic distancing language.
-
-If the notes include a separate review of psychiatric or medical records, include a subsection titled:
-
-REVIEW OF AVAILABLE PSYCHIATRIC RECORDS
-
-If no such content appears in the notes, omit this subsection entirely.
-
-THE INSTANT OFFENSE(S)
-
-This section should present the alleged conduct first as described in the criminal complaint or other records, using appropriate attribution language. This should be followed by the examinee's account of the incident(s), clearly attributed to self-report.
-
-Discussion of mental state at the time of the offense, motivation or intent, remorse, or willingness to plead guilty or participate in treatment should appear only if explicitly documented in the notes. If any of these elements are missing, insert the appropriate bold placeholder.
-
-Do not speculate or interpret beyond what is written in the notes.
-
-MENTAL STATUS EXAMINATION
-
-This section should be written as a narrative paragraph in the same style as the examples. It should cover:
-
-appearance and behavior
-alertness and orientation
-mood and affect
-speech and language
-thought processes and content
-psychotic symptoms if present
-suicidal or homicidal ideation
-insight and judgment
-understanding of legal proceedings
-
-Only include domains that are present in the notes. If a domain is absent, insert INSERT [DOMAIN] HERE.
-
-RISK ASSESSMENT
-
-This section should begin with the standard explanatory paragraph used in the example reports describing the purpose and limits of risk assessment. This boilerplate language is permitted.
-
-Following this paragraph, list aggravating and mitigating factors exactly as they appear in the notes. Do not add or infer any factors. If these lists are missing, insert INSERT AGGRAVATING FACTORS HERE or INSERT MITIGATING FACTORS HERE as appropriate.
-
-Do not invent or complete the signature block. If signature information is missing from the notes, insert INSERT SIGNATURE BLOCK HERE.
-
-When the time comes to produce the report, output only the report text. Do not include commentary, explanations, or meta-language.
-
-If you have not yet received the standardized notes, do nothing except acknowledge receipt of the example reports. Do not outline, summarize, paraphrase, or draft any portion of the report until the notes are provided.</script>
 </body>
 </html>
