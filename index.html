@@ -88,8 +88,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6/dist/amazon-cognito-identity.min.js"></script>
     <script>
-      const API_ENDPOINT = 'https://1rgumjz7d2.execute-api.us-east-2.amazonaws.com/prod/';
-      const API_KEY = '6OU0AH8w5JsWw6rFtEq35u6CApSORAh1XedhKHt2';
+      const STREAM_ENDPOINT = 'https://4voqfpwhf7tiyzxpqcejedrtii0fyhrv.lambda-url.us-east-2.on.aws/';
       const COGNITO_USER_POOL_ID = 'us-east-2_gCTbH7Sek';
       const COGNITO_CLIENT_ID = 'k8bk5a0462fmoobi07k4gplat';
       const poolData = { UserPoolId: COGNITO_USER_POOL_ID, ClientId: COGNITO_CLIENT_ID };
@@ -151,24 +150,6 @@
 
       function logout() { if (currentUser) currentUser.signOut(); currentUser = null; idToken = null; conversationHistory = []; document.getElementById('chatSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Welcome! I\'m Claude, ready to help. What would you like to know?</div>'; }
 
-      async function pollForResult(jobId) {
-        const maxAttempts = 180;
-        for (let i = 0; i < maxAttempts; i++) {
-          await new Promise(r => setTimeout(r, 1000));
-          try {
-            const resp = await fetch(API_ENDPOINT, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'Authorization': idToken },
-              body: JSON.stringify({ jobId: jobId })
-            });
-            const data = await resp.json();
-            if (data.status === 'complete') return data;
-            if (data.status === 'error') return data;
-          } catch (e) { /* retry */ }
-        }
-        return { status: 'error', error: 'Request timed out after 3 minutes' };
-      }
-
       async function sendMessage() {
         if (!currentUser || !idToken) { alert('Session expired. Please log in again.'); logout(); return; }
         const input = document.getElementById('messageInput');
@@ -183,48 +164,59 @@
         input.value = '';
         chatContainer.scrollTop = chatContainer.scrollHeight;
         loading.style.display = 'block';
+
+        const assistantDiv = document.createElement('div');
+        assistantDiv.className = 'message assistant';
+        assistantDiv.innerHTML = '';
+        chatContainer.appendChild(assistantDiv);
+
+        let fullText = '';
+
         try {
-          const response = await fetch(API_ENDPOINT, {
+          const response = await fetch(STREAM_ENDPOINT, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'Authorization': idToken },
+            headers: { 'Content-Type': 'application/json', 'Authorization': idToken },
             body: JSON.stringify({ message: message, conversationHistory: conversationHistory })
           });
-          const data = await response.json();
-          if (data.jobId) {
-            const result = await pollForResult(data.jobId);
-            loading.style.display = 'none';
-            if (result.status === 'complete' && result.response) {
-              if (result.updatedHistory) conversationHistory = result.updatedHistory;
-              const aDiv = document.createElement('div');
-              aDiv.className = 'message assistant';
-              aDiv.innerHTML = marked.parse(result.response);
-              chatContainer.appendChild(aDiv);
-            } else {
-              const eDiv = document.createElement('div');
-              eDiv.className = 'message assistant';
-              eDiv.textContent = 'Error: ' + (result.error || 'Unknown error');
-              chatContainer.appendChild(eDiv);
+
+          loading.style.display = 'none';
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+                  if (data.type === 'delta') {
+                    fullText += data.text;
+                    assistantDiv.innerHTML = marked.parse(fullText);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                  } else if (data.type === 'done') {
+                    conversationHistory = data.updatedHistory;
+                  } else if (data.type === 'error') {
+                    assistantDiv.textContent = 'Error: ' + data.error;
+                  }
+                } catch (e) { /* skip malformed */ }
+              }
             }
-          } else if (data.response) {
-            loading.style.display = 'none';
-            if (data.updatedHistory) conversationHistory = data.updatedHistory;
-            const aDiv = document.createElement('div');
-            aDiv.className = 'message assistant';
-            aDiv.innerHTML = marked.parse(data.response);
-            chatContainer.appendChild(aDiv);
-          } else if (data.error) {
-            loading.style.display = 'none';
-            const eDiv = document.createElement('div');
-            eDiv.className = 'message assistant';
-            eDiv.textContent = 'Error: ' + data.error;
-            chatContainer.appendChild(eDiv);
+          }
+
+          if (!fullText) {
+            assistantDiv.textContent = 'No response received. Please try again.';
           }
         } catch (error) {
           loading.style.display = 'none';
-          const eDiv = document.createElement('div');
-          eDiv.className = 'message assistant';
-          eDiv.textContent = 'Sorry, there was an error connecting to the server.';
-          chatContainer.appendChild(eDiv);
+          assistantDiv.textContent = 'Sorry, there was an error connecting to the server.';
         }
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
