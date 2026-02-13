@@ -1,225 +1,1041 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claude Forensics Chat</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-      .login-container, .password-change-container { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px; }
-      .password-change-container { display: none; }
-      .login-header { text-align: center; margin-bottom: 30px; }
-      .login-header h1 { color: #333; font-size: 24px; margin-bottom: 8px; }
-      .login-header p { color: #666; }
-      .form-group { margin-bottom: 20px; }
-      .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
-      .form-group input { width: 100%; padding: 12px 16px; border: 2px solid #e1e1e1; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
-      .form-group input:focus { outline: none; border-color: #667eea; }
-      button { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-      button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
-      button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-      .error { color: #e74c3c; text-align: center; margin-top: 15px; display: none; }
-      .info { color: #3498db; text-align: center; margin-bottom: 20px; font-size: 14px; }
-      .back-link { text-align: center; margin-top: 15px; }
-      .back-link a { color: #667eea; text-decoration: none; font-size: 14px; }
-      .chat-container { display: none; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 900px; height: 85vh; flex-direction: column; }
-      .chat-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
-      .chat-header h1 { font-size: 20px; }
-      .user-info { font-size: 12px; opacity: 0.9; margin-top: 4px; }
-      .logout-btn { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; width: auto; }
-      .messages { flex: 1; overflow-y: auto; padding: 20px; }
-      .message { margin-bottom: 16px; padding: 16px; border-radius: 12px; max-width: 85%; }
-      .message.user { background: #667eea; color: white; margin-left: auto; }
-      .message.assistant { background: #f5f5f5; color: #333; line-height: 1.6; }
-      .message.assistant h1, .message.assistant h2, .message.assistant h3 { margin: 16px 0 8px 0; color: #333; }
-      .message.assistant h1 { font-size: 1.5em; }
-      .message.assistant h2 { font-size: 1.3em; }
-      .message.assistant h3 { font-size: 1.1em; }
-      .message.assistant p { margin: 12px 0; }
-      .message.assistant ul, .message.assistant ol { margin: 12px 0; padding-left: 24px; }
-      .message.assistant li { margin: 6px 0; }
-      .message.assistant strong { font-weight: 600; }
-      .message.assistant code { background: #e8e8e8; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-      .message.assistant pre { background: #2d2d2d; color: #f8f8f2; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; }
-      .message.assistant pre code { background: none; padding: 0; color: inherit; }
-      .input-area { padding: 20px; border-top: 1px solid #e1e1e1; display: flex; gap: 12px; }
-      .input-area input { flex: 1; padding: 12px 16px; border: 2px solid #e1e1e1; border-radius: 8px; font-size: 16px; }
-      .input-area input:focus { outline: none; border-color: #667eea; }
-      .input-area button { width: auto; padding: 12px 24px; }
-      .loading { display: none; text-align: center; padding: 20px; }
-      .loading span { display: inline-block; width: 8px; height: 8px; background: #667eea; border-radius: 50%; margin: 0 4px; animation: bounce 1.4s infinite; }
-      .loading span:nth-child(2) { animation-delay: 0.2s; }
-      .loading span:nth-child(3) { animation-delay: 0.4s; }
-      @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-    </style>
-  </head>
-  <body>
-    <div id="loginSection" class="login-container">
-      <div class="login-header"><h1>Claude Forensics Chat</h1><p>Employee Dashboard</p></div>
-      <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" placeholder="your.email@example.com"></div>
-      <div class="form-group"><label for="password">Password</label><input type="password" id="password" placeholder="Enter your password"></div>
-      <button onclick="login()" id="loginBtn">Sign In</button>
-      <div id="loginError" class="error"></div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Forensics Chat</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-container,.password-change-container{background:#fff;padding:40px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:400px}
+.password-change-container{display:none}
+.login-header{text-align:center;margin-bottom:30px}
+.login-header h1{color:#333;font-size:24px;margin-bottom:8px}
+.login-header p{color:#666}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;margin-bottom:8px;color:#333;font-weight:500}
+.form-group input{width:100%;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px;transition:border-color .3s}
+.form-group input:focus{outline:none;border-color:#667eea}
+button{width:100%;padding:14px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s}
+button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(102,126,234,.4)}
+button:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.error{color:#e74c3c;text-align:center;margin-top:15px;display:none}
+.info{color:#3498db;text-align:center;margin-bottom:20px;font-size:14px}
+.back-link{text-align:center;margin-top:15px}
+.back-link a{color:#667eea;text-decoration:none;font-size:14px}
+.chat-container{display:none;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:900px;height:85vh;flex-direction:column}
+.chat-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
+.chat-header h1{font-size:20px}
+.user-info{font-size:12px;opacity:.9;margin-top:4px}
+.logout-btn{background:rgba(255,255,255,.2);padding:8px 16px;border-radius:6px;width:auto}
+.messages{flex:1;overflow-y:auto;padding:20px}
+.message{margin-bottom:16px;padding:16px;border-radius:12px;max-width:85%}
+.message.user{background:#667eea;color:#fff;margin-left:auto}
+.message.assistant{background:#f5f5f5;color:#333;line-height:1.6}
+.message.assistant h1,.message.assistant h2,.message.assistant h3{margin:16px 0 8px;color:#333}
+.message.assistant p{margin:12px 0}
+.message.assistant ul,.message.assistant ol{margin:12px 0;padding-left:24px}
+.message.assistant li{margin:6px 0}
+.message.assistant strong{font-weight:600}
+.message.assistant code{background:#e8e8e8;padding:2px 6px;border-radius:4px;font-family:monospace}
+.message.assistant pre{background:#2d2d2d;color:#f8f8f2;padding:16px;border-radius:8px;overflow-x:auto;margin:12px 0}
+.message.assistant pre code{background:none;padding:0;color:inherit}
+.message.system{background:#e8f4fd;color:#1a73e8;font-size:13px;padding:8px 12px;border-radius:8px;text-align:center;max-width:100%;font-style:italic}
+.message.user.auto-sent{background:#8b9cf7;font-size:13px}
+.toolbar{padding:12px 20px;border-top:1px solid #e1e1e1;background:#fafafa;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toolbar-group{display:flex;gap:8px;align-items:center}
+.toolbar-label{font-size:13px;font-weight:600;color:#555}
+.toolbar button{width:auto;padding:8px 16px;font-size:13px;border-radius:6px}
+.toolbar button.primary-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+.toolbar button.success-btn{background:linear-gradient(135deg,#28a745 0%,#218838 100%)}
+.toolbar button.reset-btn{background:#dc3545;padding:8px 12px}
+.toolbar select{padding:8px 12px;border:2px solid #e1e1e1;border-radius:6px;font-size:13px;background:#fff;cursor:pointer}
+.toolbar select:focus{outline:none;border-color:#667eea}
+.status-badge{font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600}
+.status-badge.active{background:#d4edda;color:#155724}
+.status-badge.inactive{background:#f8d7da;color:#721c24}
+.input-area{padding:20px;border-top:1px solid #e1e1e1;display:flex;gap:12px}
+.input-area input{flex:1;padding:12px 16px;border:2px solid #e1e1e1;border-radius:8px;font-size:16px}
+.input-area input:focus{outline:none;border-color:#667eea}
+.input-area button{width:auto;padding:12px 24px}
+.loading{display:none;text-align:center;padding:20px}
+.loading span{display:inline-block;width:8px;height:8px;background:#667eea;border-radius:50%;margin:0 4px;animation:bounce 1.4s infinite}
+.loading span:nth-child(2){animation-delay:.2s}
+.loading span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+  </style>
+</head>
+<body>
+  <div id="loginSection" class="login-container">
+    <div class="login-header"><h1>Claude Forensics Chat</h1><p>Employee Dashboard</p></div>
+    <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" placeholder="your.email@example.com"></div>
+    <div class="form-group"><label for="password">Password</label><input type="password" id="password" placeholder="Enter your password"></div>
+    <button onclick="login()" id="loginBtn">Sign In</button>
+    <div id="loginError" class="error"></div>
+  </div>
+  <div id="passwordChangeSection" class="password-change-container">
+    <div class="login-header"><h1>Set New Password</h1><p>Your temporary password has expired</p></div>
+    <p class="info">Please create a new password to continue.</p>
+    <div class="form-group"><label for="newPassword">New Password</label><input type="password" id="newPassword" placeholder="Enter new password"></div>
+    <div class="form-group"><label for="confirmPassword">Confirm Password</label><input type="password" id="confirmPassword" placeholder="Confirm new password"></div>
+    <button onclick="completeNewPassword()" id="changePasswordBtn">Set Password</button>
+    <div id="passwordError" class="error"></div>
+    <div class="back-link"><a href="#" onclick="backToLogin()">Back to Login</a></div>
+  </div>
+  <div id="chatSection" class="chat-container">
+    <div class="chat-header">
+      <div><h1>Claude Forensics Chat</h1><p class="user-info" id="userEmail"></p></div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
-    <div id="passwordChangeSection" class="password-change-container">
-      <div class="login-header"><h1>Set New Password</h1><p>Your temporary password has expired</p></div>
-      <p class="info">Please create a new password to continue.</p>
-      <div class="form-group"><label for="newPassword">New Password</label><input type="password" id="newPassword" placeholder="Enter new password"></div>
-      <div class="form-group"><label for="confirmPassword">Confirm Password</label><input type="password" id="confirmPassword" placeholder="Confirm new password"></div>
-      <button onclick="completeNewPassword()" id="changePasswordBtn">Set Password</button>
-      <div id="passwordError" class="error"></div>
-      <div class="back-link"><a href="#" onclick="backToLogin()">Back to Login</a></div>
+    <div class="messages" id="chatContainer">
+      <div class="message assistant">Welcome! Use the toolbar below: insert the base prompt (Step 1), select a disorder and insert examples (Step 2), then paste your evaluation notes.</div>
     </div>
-    <div id="chatSection" class="chat-container">
-      <div class="chat-header">
-        <div><h1>Claude Forensics Chat</h1><p class="user-info" id="userEmail"></p></div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+    <div class="loading" id="loading"><span></span><span></span><span></span></div>
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Step 1:</span>
+        <button class="primary-btn" id="insertBasePromptBtn" onclick="insertBasePrompt()">Insert Base Prompt</button>
+        <span class="status-badge inactive" id="basePromptStatus">Not Sent</span>
       </div>
-      <div class="messages" id="chatContainer">
-        <div class="message assistant">Welcome! I'm Claude, ready to help. What would you like to know?</div>
+      <div class="toolbar-group">
+        <span class="toolbar-label">Step 2:</span>
+        <select id="diagnosisSelect"><option value="">-- Select Disorder --</option><option value="schizophrenia">Schizophrenia</option><option value="ptsd">PTSD / Trauma-Related</option><option value="bipolar">Bipolar / Mood Disorders</option></select>
+        <button class="success-btn" id="insertExamplesBtn" onclick="insertExamples()">Insert Examples</button>
+        <span class="status-badge inactive" id="examplesStatus">Not Sent</span>
       </div>
-      <div class="loading" id="loading"><span></span><span></span><span></span></div>
-      <div class="input-area">
-        <input type="text" id="messageInput" placeholder="Type your question..." onkeypress="if(event.key==='Enter')sendMessage()">
-        <button onclick="sendMessage()">Send</button>
+      <div class="toolbar-group">
+        <button class="reset-btn" onclick="resetConversation()">Reset</button>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6/dist/amazon-cognito-identity.min.js"></script>
-    <script>
-      const STREAM_ENDPOINT = 'https://4voqfpwhf7tiyzxpqcejedrtii0fyhrv.lambda-url.us-east-2.on.aws/';
-      const COGNITO_USER_POOL_ID = 'us-east-2_gCTbH7Sek';
-      const COGNITO_CLIENT_ID = 'k8bk5a0462fmoobi07k4gplat';
-      const poolData = { UserPoolId: COGNITO_USER_POOL_ID, ClientId: COGNITO_CLIENT_ID };
-      const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-      let currentUser = null;
-      let idToken = null;
-      let conversationHistory = [];
-      let cognitoUserForPasswordChange = null;
-      let userAttributesForPasswordChange = null;
+    <div class="input-area">
+      <input type="text" id="messageInput" placeholder="Paste evaluation notes here..." onkeypress="if(event.key==='Enter')sendMessage()">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+  <script type="text/plain" id="schiz-ex-1">Here is Example Report 1 for formatting reference:
 
-      window.onload = function() {
-        const cognitoUser = userPool.getCurrentUser();
-        if (cognitoUser) {
-          cognitoUser.getSession((err, session) => {
-            if (err || !session.isValid()) return;
-            currentUser = cognitoUser;
-            idToken = session.getIdToken().getJwtToken();
-            showChat(cognitoUser.getUsername());
-          });
-        }
-      };
+KINGS COUNTY MENTAL HEALTH COURT
+FORENSIC PSYCHIATRIC EVALUATION
+JAMAL ALAUR
 
-      function login() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const errorDiv = document.getElementById('loginError');
-        const loginBtn = document.getElementById('loginBtn');
-        if (!email || !password) { errorDiv.textContent = 'Please enter both email and password'; errorDiv.style.display = 'block'; return; }
-        errorDiv.style.display = 'none';
-        loginBtn.disabled = true;
-        loginBtn.textContent = 'Signing in...';
-        const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({ Username: email, Password: password });
-        const cognitoUser = new AmazonCognitoIdentity.CognitoUser({ Username: email, Pool: userPool });
-        cognitoUser.authenticateUser(authDetails, {
-          onSuccess: function(result) { currentUser = cognitoUser; idToken = result.getIdToken().getJwtToken(); loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; showChat(email); },
-          onFailure: function(err) { loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; errorDiv.textContent = err.message || 'Authentication failed'; errorDiv.style.display = 'block'; },
-          newPasswordRequired: function(userAttributes) { cognitoUserForPasswordChange = cognitoUser; delete userAttributes.email_verified; delete userAttributes.email; userAttributesForPasswordChange = userAttributes; loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; showPasswordChangeSection(); }
+Shlomit Levy, LCSW
+Project/Clinical Director
+Brooklyn Mental Health Court
+320 Jay Street, Room 14.66
+Brooklyn, NY 11021
+
+Date of Report: December 15, 2025
+Date of Exam: November 18, 2025
+
+INTRODUCTION
+
+I, Francheska Bidot Rodriguez, PhD, performed a psychological and psychiatric examination of Mr. Jamal Alaur in order to answer the following questions:
+
+Does Mr. Alaur suffer from any mental disease or defect that might have contributed to his offense conduct?
+Can Mr. Alaur be safely maintained in the community with an appropriate treatment plan?
+What are his current treatment needs, taking into account the criminogenic factors identified?
+Is Mr. Alaur willing and motivated to engage in appropriate treatment?
+
+Mr. Alaur is currently charged with six counts of burglary in the third degree, six counts of petit larceny, six counts of criminal possession of stolen property in the fifth degree, and other related charges stemming from several incidents that allegedly occurred from November 29, 2022, to February 15, 2023.
+
+Mr. Alaur is currently detained at Rikers Island. I evaluated Mr. Alaur via a secure video conferencing platform. The limits of confidentiality inherent to this examination were explained to Mr. Alaur. He demonstrated an adequate understanding of these concepts and consented to participate.
+
+I reviewed the following sources of information:
+Criminal Complaint, The People of the State of New York v. Jamal Alaur, dated February 16, 2023
+Fingerprint Response Summary, dated February 17, 2023
+Brooklyn Mental Health Court Referral Sheet, dated April 17, 2025
+Brooklyn Mental Health Court Psychosocial Interview, authored by Tigan Kessler, LCSW, dated October 3, 2025
+Medical records from NYC Health + Hospitals/Correctional Health Services, dated March 26, 2025, to October 7, 2025
+
+RELEVANT HISTORY
+
+Mr. Jamal Alaur is a 37-year-old Arabic man, born on January 6, 1988, in Brooklyn, NY. He was raised by both parents alongside three brothers and a sister, in Bay Ridge, Brooklyn. Mr. Alaur denied any history of developmental delays, childhood abuse, or trauma. He additionally reported no family history of mental illness or substance use. Mr. Alaur reported maintaining positive familial relationships at present. He indicated that his needs were met throughout his upbringing. He reported that he is currently single and denied having any children. Prior to his arrest, Mr. Alaur was residing with his family, denying a history of homelessness. Of note, records indicate that Mr. Alaur has a history of homelessness.
+
+Regarding educational attainment, Mr. Alaur reportedly obtained his General Equivalency Diploma in 2009. He denied a history of special education services or learning disabilities. Mr. Alaur denied a history of expulsions or behavioral problems; however, he acknowledged one suspension in junior high school for fighting. Mr. Alaur reported a history of employment as a bread delivery boy and a warehouse worker. His longest employment was as a delivery boy for approximately four years. His last employment was as a warehouse worker from 2019 to 2022.
+
+Medically speaking, Mr. Alaur denied a history of chronic medical issues, head injuries resulting in loss of consciousness or cognitive sequelae, seizures, and surgeries. He reported a history of two hospitalizations for stomach pain.
+
+Mr. Alaur denied current use of substances. He reported a history of polysubstance use including cannabis, cocaine, and heroin. Mr. Alaur disclosed daily use of cannabis and heroin, and occasional use of cocaine. His medical records additionally note a history of opioid use, benzodiazepines, unspecified anxiolytics, unspecified amphetamines, and unspecified hypnotics. He reported previous treatment for a month at a rehabilitation facility. Mr. Alaur tested positive for heroin during his intake at Rikers Island and has been receiving methadone treatment.
+
+Mr. Alaur denied a history of psychiatric hospitalizations or mental health treatment, including psychotropic medication. He reported that his first encounter with such medication was upon intake at Rikers Island. His current treatment involves Haldol and two other medications he could not name; according to records, the other two medications are Remeron and Cogentin. Regarding psychiatric symptomology, he reported sleep disturbances, racing thoughts, feelings of nervousness/uneasiness, and shaking. Mr. Alaur denied knowledge of any current diagnosis. Of note, during a recent psychosocial interview, he disclosed previously being diagnosed with schizophrenia, two hospitalizations due to yelling on the street, and identified auditory hallucinations as his primary symptom.
+
+Mr. Alaur reported a history of over 90 arrests outside of his arrest for the instant offense. He denied culpability for his legal involvement. Mr. Alaur's Fingerprint Response Summary indicated that he has a total of 41 arrests for various charges including petit larceny, criminal possession of stolen property, and criminal possession of controlled substances.
+
+REVIEW OF AVAILABLE PSYCHIATRIC RECORDS
+
+Despite Mr. Alaur's denial of a mental health history, a review of available records reveals he began exhibiting psychotic symptoms in 2002 and has a significant history of receiving services for both psychiatric and substance-related difficulties. Since 2015, he had over three dozen emergency department visits and hospitalizations related to substance use and overdoses. He has additionally received substance use treatment on numerous occasions. Previous psychiatric diagnoses have included delusional disorder, schizophrenia, and adjustment disorder. When in periods of decompensation, he presents with anxiety, depression, auditory hallucinations, delusional thought content, insomnia, a decreased appetite, and psychomotor agitation.
+
+Records show that on April 27, 2024, Mr. Alaur admitted to experiencing suicidal ideation and intended to tie a bedsheet around his neck. He was placed on suicide watch for three days. After being adjudicated as an incapacitated person pursuant to CPL 730, Mr. Alaur was admitted to Mid-Hudson Forensic Psychotherapy Center on November 12, 2024, for competency restoration treatment. During this hospitalization, he was demonstrating delusional thought content. Treatment over objection was granted on December 12, 2024, allowing a transition in treatment from olanzapine to Haldol injections, which successfully stabilized Mr. Alaur's clinical presentation. He was discharged with a diagnosis of schizophrenia and a medication regimen including Haldol Decanoate, Cogentin, Benadryl, and Remeron and transferred back to Rikers Island on March 26, 2025.
+
+THE INSTANT OFFENSE
+
+According to the Criminal Complaint, on six separate occasions from November 29, 2022, to February 15, 2023, Mr. Alaur allegedly trespassed business premises, in violation of an order of protection signed on November 11, 2022. It is alleged that during the first, fifth, and sixth events, Mr. Alaur entered the premises to steal two packs of beer each time. During the second and third instant, he allegedly stole laundry detergent, and on the fourth instant he allegedly stole deodorant.
+
+Mr. Alaur reported an understanding that accepting a guilty plea is required to participate in mental health court; however, he denied all his current charges. When presented with details about the alleged instant offenses, he denied the events entirely.
+
+MENTAL STATUS EXAMINATION
+
+Mr. Jamal Alaur is a 37-year-old Arabic man who appeared his stated age. He was dressed in jail-issued attire, had dark outgrown hair, and appeared adequately groomed. He presented with persistent rocking restlessness. Mr. Alaur was alert and fully oriented to time, person, and place. He was cooperative with the evaluation and engaged appropriately. He was able to provide a coherent biographic narrative; however, due to discrepancies between his self-report and medical records, he impressed as an unreliable historian. His speech was fluent and normal for rate, rhythm, and volume. His thought processes were linear, organized, and coherent. Mr. Alaur did not break focus in ways consistent with internal preoccupation. He denied experiencing auditory and visual hallucinations. Mr. Alaur's mood was euthymic and his affect was congruent with his mood and in full range. He denied current suicidal ideation, intent, or behavior.
+
+Mr. Alaur expressed poor insight into his psychiatric illness and need for treatment. He demonstrated poor understanding of his charges, the legal proceedings in which he is involved, and the nature and rules of the Mental Health Court.
+
+RISK ASSESSMENT
+
+A risk assessment is a comprehensive analysis of an individual's potential for future violent behavior. Although it is impossible to predict whether someone will be violent at any given moment, this analysis stratifies the risk of dangerousness into low, medium, and high. It provides a general assessment of the individual's potential for future violence by analyzing a number of significant factors that have been associated with violent behavior.
+
+Mr. Alaur presents with the following aggravating factors for dangerousness:
+History of severe mental illness
+History of substance use
+Extensive history of criminal justice involvement
+History of homelessness
+Lack of stable employment
+
+Mitigating factors reducing the risk for violence include:
+Familial support
+Interest in mental health treatment
+Current medication compliance and consequent resolve of psychiatric symptoms
+Current abstinence from substances
+
+DIAGNOSIS AND FORMULATION
+
+Mr. Alaur underwent a psychological examination to assess his eligibility for diversion into the Brooklyn Mental Health Court. As a result of this psychological examination and review of available collateral data, I have come to the following diagnostic categorization, as defined by the DSM-5-TR:
+
+Schizophrenia, multiple episodes, in partial remission
+Unspecified Opioid-Related Disorder
+Unspecified Cannabis-Related Disorder
+Unspecified Stimulant-Related Disorder
+
+While he denied any history of psychiatric symptoms during the present evaluation, Mr. Alaur meets the DSM-5-TR criteria for schizophrenia, multiple episodes, in partial remission. Collateral records indicate Mr. Alaur has exhibited symptoms of psychosis since at least 2002. His current medication regimen has successfully reduced Mr. Alaur's overt psychotic symptoms.
+
+Given the severity of his mental illness, its direct relationship to the offense conduct, and his expressed motivation for treatment, it is my opinion that Mr. Alaur is a good candidate for diversion into the Mental Health Court.
+
+Respectfully submitted,
+Francheska Bidot Rodriguez, Ph.D.
+FIFTH AVENUE FORENSICS
+Licensed Clinical Psychologist</script>
+  <script type="text/plain" id="schiz-ex-2">Here is Example Report 2 for formatting reference:
+
+KINGS COUNTY MENTAL HEALTH COURT
+FORENSIC-PSYCHIATRIC EVALUATION
+KAREEM GAINES
+
+Ruth O'Sullivan, LCSW
+Project/Clinical Director
+Brooklyn Mental Health Court
+320 Jay Street, Room 14.66
+Brooklyn, NY 11021
+
+Date of Report: October 2, 2025
+Date of Exam: September 23, 2025
+
+INTRODUCTION
+
+I, Dr. LaShonda T. Green, performed a psychiatric examination of Mr. Kareem Gaines in order to answer the following questions:
+
+Does Mr. Gaines suffer from any mental disease or defect that might have contributed to his offense conduct?
+Is Mr. Gaines a candidate for diversion into Brooklyn Mental Health Court?
+Does Mr. Gaines pose any threat or danger to the community as a result of a mental disease or defect?
+What are his current treatment needs taking into account the criminogenic factors identified?
+
+The case was discussed with Dr. Alexander Bardey. Mr. Gaines is currently charged with two counts of criminal contempt in the second degree stemming from an incident that allegedly occurred on or about May 19, 2025.
+
+The following documents were reviewed as part of the evaluation:
+Criminal Complaint of the City of New York, County of Kings, dated May 22, 2025
+New York State Division of Criminal Justice Services, Additional Fingerprint Response, dated May 19, 2025
+Psychosocial Interview, authored by Nancy Frost, LCSW, dated September 2, 2025
+
+PAST PERSONAL HISTORY
+
+Mr. Gaines is an unmarried, 41-year-old, Black American male was born in Brooklyn, and raised primarily by his mother in the Bedford-Stuyvesant neighborhood. His father resided in the home during his upbringing but moved out when Mr. Gaines was approximately 21-22 years old. Mr. Gaines reported having one sister, age 43, with whom he maintains consistent contact. He denied any major difficulties during childhood, including abuse, neglect, or placement in foster care, and reported that his basic needs were consistently met.
+
+Mr. Gaines reported earning his high school diploma from Procter High School in upstate New York in 1999. Prior to this, he attended Job Corps in 1998 as a barber's apprentice. He denied truancy, suspensions, or expulsions, though acknowledged involvement in three to four physical fights during school.
+
+Occupationally, he reported working for Lion Security from approximately ages 18 to 23. He later worked at a cellphone store in a maintenance role for about three years but left due to inadequate pay.
+
+Mr. Gaines is currently out on bail. He reported an estimated nine prior arrests, primarily related to warrants, failures to appear, and minor offenses. He is currently residing at the Bedford Atlantic Men's Shelter in Brooklyn. He reported a history of homelessness.
+
+Mr. Gaines reported having two children, a 13-year-old son and a 9-year-old son. He described himself as "a good father." He described his mother, sister, and paternal uncle as his most important supports.
+
+Mr. Gaines reported initiating marijuana use at approximately age 17 and described a past cannabis habit, which he stated he quit three years ago. He denied use of other illicit substances.
+
+Mr. Gaines reported a psychiatric history significant for a diagnosis of schizophrenia at approximately age 16. He denied paranoia, hallucinations, or other psychotic features. He denied psychiatric hospitalizations but reported beginning outpatient psychiatric treatment at Kings County Hospital the week prior to the evaluation. He stated that he has been prescribed Depakote and Risperdal. He also reported being prescribed Invega Sustenna more recently.
+
+THE INSTANT OFFENSE
+
+Regarding the instant offense, Mr. Gaines reported that the incident occurred at his grandmother's residence, where he was not permitted to stay. He described a verbal argument in May 2025 after his grandmother requested that he return to the shelter. He acknowledged that he was cursing at her in a loud voice but denied making threats or engaging in any property destruction.
+
+According to the Criminal Complaint, Police Officer Aleksandra W. Chorazewicz alleged that on May 19, 2025, at approximately 11:10 a.m., Mr. Gaines committed two counts of Criminal Contempt in the Second Degree by being present at the residence of Ms. Berena Howell in violation of two active orders of protection.
+
+MENTAL STATUS EXAM
+
+Mr. Gaines presented as an adult male who appeared his stated age. He was casually dressed and appropriately groomed. Psychomotor activity was within normal limits. He was alert and fully oriented to person, place, time, and situation. Eye contact was appropriate, and social behavior was cooperative. Speech was generally normal in rate, volume, and prosody; however, articulation was poor, and his verbal expression was sometimes difficult to understand.
+
+Mood was described as neutral, and affect was congruent, stable, and of full range. Thought processes were logical, organized, and goal-directed. No loosening of associations, flight of ideas, or thought blocking was observed. At the time of the evaluation, Mr. Gaines denied auditory or visual hallucinations, as well as suicidal or homicidal ideation.
+
+Cognitive functioning appeared grossly intact. However, he presented as a somewhat subpar historian. Insight into his circumstances was limited, and judgment appeared fair.
+
+RISK ASSESSMENT
+
+A risk assessment is a comprehensive analysis of an individual's potential for future violent behavior. Although it is impossible to predict whether someone will be violent at any given moment, this analysis stratifies the risk of dangerousness into low, medium, and high.
+
+Mr. Gaines presents with the following aggravating factors for dangerousness:
+History of multiple arrests, including for violations of orders of protection
+Diagnosis of schizophrenia with noted disorganization and limited insight into illness
+Strained family relationships, including conflicts with grandmother
+Periods of homelessness and unstable housing
+Limited occupational stability and financial stressors
+
+Mitigating factors reducing the risk for violence include:
+Denies history of physical violence, threats, or property destruction
+Reported compliance with prescribed medications
+Recent engagement with outpatient psychiatric care at Kings County Hospital
+Supportive relationships with mother, sister, and paternal uncle
+Positive involvement with children
+
+DIAGNOSIS AND FORMULATION
+
+As a result of this psychiatric and psychological examination and review of available collateral data, I have come to the following diagnostic categorization:
+
+Primary Diagnoses
+F20.9 - Schizophrenia, unspecified
+
+Rule-Out / Differential Diagnoses
+F12.20 - Cannabis Use Disorder, moderate (in sustained remission, by report)
+
+In conclusion, it is our opinion, with a reasonable degree of scientific and psychological certainty, that Mr. Gaines is a good candidate for diversion into the Brooklyn Mental Health Court.
+
+Respectfully submitted,
+LaShonda T. Green, Psy.D.
+FIFTH AVENUE FORENSICS
+Licensed Psychologist
+
+Alexander Sasha Bardey, M.D.
+FIFTH AVENUE FORENSICS</script>
+  <script type="text/plain" id="ptsd-ex-1">Here is Example Report 1 for formatting reference:
+
+KINGS COUNTY MENTAL HEALTH COURT
+FORENSIC PSYCHIATRIC EVALUATION
+EDWIN CUEBAS
+
+Shlomit Levy, LCSW
+Project/Clinical Director
+Brooklyn Mental Health Court
+
+Date of Report: November 14, 2025
+Date of Exam: October 14, 2025
+
+INTRODUCTION
+
+I, Francheska Bidot Rodriguez, Ph.D., performed a psychological and psychiatric examination of Mr. Edwin Cuebas in order to answer the following questions:
+
+Does Mr. Cuebas suffer from any mental disease or defect that might have contributed to his offense conduct?
+Can Mr. Cuebas be safely maintained in the community with an appropriate treatment plan?
+What are his current treatment needs, taking into account the criminogenic factors identified?
+Is Mr. Cuebas willing and motivated to engage in appropriate treatment?
+
+Mr. Cuebas is currently charged with burglary in the second and third degree, grand larceny in the fourth degree, and other related charges stemming from an incident that allegedly occurred on September 5, 2024. He is also charged with robbery in the third degree and other related charges pursuant to an incident that allegedly took place on September 15, 2024. Additionally, Mr. Cuebas is charged with possession of burglar's tools, stemming from an incident that allegedly occurred on September 17, 2024.
+
+RELEVANT HISTORY
+
+Mr. Edwin Cuebas is a 48-year-old Latino man, born on May 22, 1977, in Brooklyn, NY. He reported being raised by his mother and father, alongside his three siblings. He maintains good relationships with his immediate family. Mr. Cuebas denied any history of childhood abuse or trauma. He disclosed that he is currently in a relationship and has a daughter from a previous relationship. At present, Mr. Cuebas resides in Brooklyn, NY, in the basement of his father's residence.
+
+Mr. Cuebas was educated in the Brooklyn school system through the eleventh grade, when he discontinued his education due to truancy. He was transferred into special education courses as a result of an ADHD diagnosis. He acknowledged two suspensions and one expulsion. He reported obtaining his GED.
+
+Mr. Cuebas reported a history of employment as a doorman and construction worker, before becoming self-employed as a contractor. He worked for Con Edison's gas capping services during 9/11 and is in the process of a SSDI application through the 9/11 Health Fund.
+
+Medically speaking, Mr. Cuebas reported a history of asthma, early onset COPD, meningioma, and a hernia. He acknowledged several previous head injuries and denied loss of consciousness.
+
+Mr. Cuebas' history was indicative of extensive substance abuse. He recalled initially experimenting with cannabis and alcohol at the age of 15 or 16. According to available medical records, Mr. Cuebas has a history of heroin and fentanyl use. Mr. Cuebas admitted daily use of cannabis until present day. He reported cocaine use of the last decade. At present, Mr. Cuebas continues to use cocaine, cannabis, and alcohol.
+
+Mr. Cuebas' account of his psychiatric history was inconsistent and at times contradictory. He recalled a previous diagnosis of posttraumatic stress disorder after the terrorist attacks on September 11, 2001, as well as diagnoses of depression and bipolar disorder around 2015 to 2016. Mr. Cuebas expressed that cannabis use was his preferred method of coping with his psychiatric symptoms.
+
+Mr. Cuebas reported a history of over 40 arrests prior to his arrest for the instant offense. According to his Fingerprint Response Summary, Mr. Cuebas has a total history of 14 arrests predominantly related to robbery charges.
+
+REVIEW OF AVAILABLE PSYCHIATRIC RECORDS
+
+Mr. Cuebas was referred to Rikers Island mental health treatment on October 26, 2024. He reported symptoms including insomnia, depression and anxiety. He disclosed a history of trauma precipitated by his experience during the 9/11 attacks and the recent death of his fiancee.
+
+Historical diagnoses documented in his medical records included posttraumatic stress disorder, bipolar II disorder, generalized anxiety disorder, cocaine use disorder - severe, opioid use disorder - moderate. During his incarceration at Rikers Island, Mr. Cuebas was prescribed Zoloft, Clonidine, and Methadone.
+
+THE INSTANT OFFENSE
+
+According to the Criminal Complaint, on September 5, 2024, Mr. Cuebas allegedly broke into a building, went to the basement, and stole a trolley, a scooter, and boxes from a supply closet. A second Criminal Complaint alleged that on September 15, 2025, Mr. Cuebas forcefully took possession of the complainant's cellphone and charging wire. According to an additional Criminal Complaint, on September 17, 2024, Mr. Cuebas was allegedly observed in possession of burglary tools.
+
+When questioned about the allegations, Mr. Cuebas reported that he was accused of "many burglaries and things." He initially denied involvement and characterized the charges as "unfair."
+
+MENTAL STATUS EXAMINATION
+
+Mr. Edwin Cuebas is a 48-year-old Latino man who appeared older than his stated age. He was slender, clean shaven, with short brown hair, and appeared to be well groomed. Mr. Cuebas was alert and fully oriented to time, person, and place. He was cooperative with the evaluation. His speech was sporadically rapid and indistinct. His thought processes at times appearing linear and coherent, and at other times, tangential. His reliability as a historian was compromised by inconsistencies. Mr. Cuebas' mood was euthymic and his affect was congruent, appropriate, and in full range. Delusions were not elicited. He denied suicidal ideation, intent, and behavior. He denied homicidal ideation.
+
+Mr. Cuebas expressed fair insight into his psychiatric illness and need for treatment. He understood his charges, the legal proceedings in which he is involved, and the nature and rules of the Mental Health Court.
+
+RISK ASSESSMENT
+
+A risk assessment is a comprehensive analysis of an individual's potential for future violent behavior.
+
+Mr. Cuebas presents with the following aggravating factors for dangerousness:
+Lack of stable employment
+History of medication noncompliance
+History of substance use
+Extensive history of criminal justice involvement
+Repetitive nature of the instant allegations
+
+Mitigating factors reducing the risk for violence include:
+Self-reported interest in mental health treatment
+Familial support
+History of stable housing
+Motivation to improve current life circumstances
+
+DIAGNOSIS AND FORMULATION
+
+Posttraumatic Stress Disorder
+Cocaine Use Disorder
+Cannabis Use Disorder
+Alcohol Use Disorder
+Attention-Deficit/Hyperactivity Disorder, by history
+
+Given these factors, their relationship to the offense conduct, and his expressed motivation for treatment, it is my opinion that Mr. Cuebas is a fair candidate for diversion into the Mental Health Court.
+
+Respectfully submitted,
+Francheska Bidot Rodriguez, Ph.D.
+FIFTH AVENUE FORENSICS
+Licensed Clinical Psychologist</script>
+  <script type="text/plain" id="ptsd-ex-2">Here is Example Report 2 for formatting reference:
+
+KINGS COUNTY MENTAL HEALTH COURT
+FORENSIC-PSYCHIATRIC EVALUATION
+JASHAWN LANE
+
+Shlomit Levy, LCSW
+Project/Clinical Director
+Brooklyn Mental Health Court
+
+Date of Report: November 14, 2025
+Date of Exam: October 15, 2025
+
+INTRODUCTION
+
+I, Dr. Francheska Bidot Rodriguez, performed a psychiatric examination of Jashawn Lane to answer the following questions:
+
+Does Jashawn Lane suffer from any mental disease or defect that might have contributed to his offense conduct?
+Is Jashawn Lane a candidate for diversion into Kings County's Mental Health Court?
+Does Jashawn Lane pose any threat or danger to the community as a result of a mental disease or defect?
+What are his current treatment needs, taking into account the criminogenic factors identified?
+
+Mr. Lane is charged with criminal possession of a weapon in the second, third, and fourth degrees, and criminal possession of a firearm stemming from an incident that allegedly occurred on September 25, 2024.
+
+RELEVANT HISTORY
+
+Mr. Jashawn Lane is a 34-year-old African American man, born on July 14, 1991, in Lawrence, South Carolina. He is currently residing in the community with his girlfriend and their three-year-old son in Brooklyn, New York.
+
+Mr. Lane was raised by his late great-grandmother and mother alongside his three younger siblings. He described his great-grandmother as a second mother who ensured that his basic needs were met. His biological father was not present in Mr. Lane's life. Mr. Lane reported significant exposure to community violence. He lost a close friend due to gun violence at the age of 16.
+
+Mr. Lane reported maintaining a stable relationship with his girlfriend of approximately ten years. He has four additional children, two reside with their mother, and two reside with his mother due to an active case with the Administration for Children Services.
+
+Mr. Lane was placed in special education during elementary school with an IEP to address challenges with reading, speech, and comprehension. He dropped out of school in the 11th grade due to lack of motivation.
+
+Mr. Lane reported a short employment history. He reported receiving Supplemental Security Income to support himself and his family.
+
+Mr. Lane acknowledged a history of anxiety since childhood and reported experiencing trauma-related symptoms throughout his life. He described existing in a constant state of hypervigilance and paranoia. He reported experiencing panic attacks. Mr. Lane reported intrusion symptoms related to adverse experiences while detained, including nightmares. He reported disturbances in sleep and hyperreactivity.
+
+Mr. Lane is receptive to receiving treatment. He has not previously received mental health services.
+
+At 14 years old, Mr. Lane started using cannabis which escalated to smoking several times per day. In his early 20s, he additionally used cocaine primarily in social contexts.
+
+According to his arrest record, in November 2011, Mr. Lane pleaded guilty to second-degree attempted burglary.
+
+THE INSTANT OFFENSE
+
+According to the Criminal Complaint, on or about September 25, 2024, Mr. Lane was allegedly in possession of a loaded handgun.
+
+Mr. Lane reported that he used cannabis and cocaine to self-medicate his trauma-related symptoms. He acknowledged that he was apprehended while in possession of a firearm. He stated that he discovered the weapon near his residence and attributed this decision to persistent concerns about his safety, as he had been threatened that he would be shot.
+
+Mr. Lane demonstrated some insight into the seriousness of the matter. He expressed an understanding of the legal ramifications of carrying a weapon and acknowledged that retaining the firearm was wrong.
+
+MENTAL STATUS EXAM
+
+Mr. Jashawn Lane is a 34-year-old African American man who appeared his stated age. He was adequately groomed and dressed casually. Mr. Lane was alert and fully oriented. He was cooperative and was able to provide a coherent biographic narrative. His mood was euthymic and his affect was congruent, appropriate, and in full range. His speech was fluent and normal. His thought processes were linear, organized, and coherent. Delusions were not elicited. He denied suicidal ideation.
+
+Mr. Lane expressed fair insight into his psychiatric illness and need for treatment. Mr. Lane appeared to understand his charges and the nature of the Mental Health Court.
+
+RISK ASSESSMENT
+
+A risk assessment is a comprehensive analysis of an individual's potential for future violent behavior.
+
+Mr. Lane presents with the following aggravating factors for dangerousness:
+Limited employment history
+Recent housing instability
+History of substance use
+History of trauma
+
+Mitigating factors reducing the risk for violence include:
+Motivation to engage in treatment
+Family support
+Insight into his mental illness
+
+DIAGNOSIS AND FORMULATION
+
+Posttraumatic Stress Disorder
+Unspecified Neurodevelopmental Disorder
+Cannabis Use Disorder, moderate
+Stimulant Use Disorder, moderate, in sustained remission
+
+As such, it is my opinion, to a reasonable degree of psychiatric certainty, that Mr. Lane is a good candidate for diversion into the Mental Health Court.
+
+Respectfully submitted,
+Francheska Bidot Rodriguez, Ph.D.
+FIFTH AVENUE FORENSICS
+Licensed Clinical Psychologist</script>
+  <script type="text/plain" id="ptsd-ex-3">Here is Example Report 3 for formatting reference:
+
+KINGS COUNTY MENTAL HEALTH COURT
+FORENSIC PSYCHOLOGICAL EVALUATION
+ALFRED SIMMONS
+
+Shlomit Levy, LCSW
+Project/Clinical Director
+Brooklyn Mental Health Court
+
+Date of Report: December 8, 2025
+Date of Exam: December 01, 2025
+
+INTRODUCTION
+
+I, Francheska Bidot Rodriguez, Ph.D., performed a psychiatric examination of Mr. Alfred Simmons.
+
+Mr. Simmons is currently charged with aggravated family offense and criminal contempt in the second degree stemming from an incident that occurred on March 26, 2025.
+
+Mr. Simmons is currently detained at Rikers Island.
+
+RELEVANT HISTORY
+
+Mr. Alfred Simmons is a 29-year-old single African American man, born May 2, 1996, in Queens, NY. Mr. Simmons was raised by his mother and father until the age of seven when his father was incarcerated. He describes his childhood as "not the best" as they struggled with poverty. He did report physical and emotional abuse by his father during his childhood. Mr. Simmons reported two traumatic instances: In 2008, he watched his sister being raped by their father and in 2010, he witnessed his friend dying after being shot.
+
+He has one biological son who is four and a stepson who is five.
+
+Mr. Simmons formal education ended in 11th grade due to him being incarcerated. He was in special education classes and had an IEP due to behavioral issues. He was suspended in three different incidents.
+
+Regarding his work history, Mr. Simmons reported having worked at Ready, Willing, and Able, a furniture store, and a glass store, each for a few months.
+
+Mr. Simmons did not report any medical conditions except asthma. He did report two incidents of head injury, one resulting in loss of consciousness.
+
+Mr. Simmons reported a history of cocaine, cannabis, and ecstasy misuse prior to his incarceration. He reported that he began smoking cannabis at age nine and smokes nearly every day to help "escape reality."
+
+Mr. Simmons's psychiatric history includes four hospitalizations, two as a child and two as an adult. In 2024, he was hospitalized after attempting suicide on the train tracks. Another hospitalization in 2024, Mr. Simmons had attempted suicide by cutting his wrists.
+
+He has a prior history of diagnoses including ADHD, PTSD, borderline personality disorder, anxiety, and cannabis use disorder. He currently presents with irritability, low mood, nightmares, and hyper-vigilance. At Rikers Island, he is currently prescribed Sertraline and Melatonin.
+
+Mr. Simmons has a history of self-harming and attempted suicide. He reported his first attempt in 2017 when he attempted to hang himself in his cell, followed by multiple attempts in 2017, 2024, and 2025.
+
+Mr. Simmons acknowledged being previously arrested approximately three times as a child and three times as an adult.
+
+REVIEW OF AVAILABLE PSYCHIATRIC RECORDS
+
+Per the Correctional Health Services records, Mr. Simmons was admitted to Rikers Island on March 27, 2024. Upon arrival, the toxicology report was positive for cannabis. Upon intake, notes reveal Mr. Simmons reported a history of anxiety, schizophrenia and bipolar disorder. Treatment notes indicate difficulty sleeping and eating, low moods with a history of self-harming behaviors. He was placed on suicide watch in September 2025 due to his statement that he drank bleach.
+
+THE INSTANT OFFENSE
+
+According to the indictment, Mr. Simmons was charged with aggravated family offense and criminal contempt in the second degree stemming from an incident that occurred on March 26, 2025. The complaint stated that Mr. Simmons would not leave the informant's house and cursed in front of their son, in violation of an order of protection.
+
+When asked about the alleged incident, Mr. Simmons acknowledged that he violated the order of protection. He stated that he did have a knife and was resisting arrest. At the time of the incidents, Mr. Simmons was under the influence of cocaine and cannabis and was not taking any medication.
+
+MENTAL STATUS EXAMINATION
+
+Mr. Simmons is a 29-year-old African American male who appeared his stated age. He presented as well-groomed and dressed in jail issued garb. He was pleasant and engaged. He described his mood as "down but alright." His affect was flat and generally appropriate. Mr. Simmons expressed suicidal ideation as he often feels "depressed" and expressed "not wanting to live." He did not express any homicidal ideation. No evidence of active psychosis was elicited.
+
+Mr. Simmons was alert and oriented to person, place, and situation. His attention and concentration were adequate. Memory presented as poor to fair. Judgment appeared fair. His thought processes were linear, organized, and coherent. His insight into his psychiatric condition was poor. He appeared to be a poor to fair historian.
+
+RISK ASSESSMENT
+
+A risk assessment is a comprehensive analysis of an individual's potential for future violent behavior.
+
+Mr. Simmons presents with the following aggravating factors for dangerousness:
+Severe mental illness
+Prior criminal history
+Lack of insight into his mental illness
+History of noncompliance with medication
+Lack of social and familial support
+
+Mitigating factors reducing the risk for violence include:
+Willingness to engage in treatment
+
+DIAGNOSIS AND FORMULATION
+
+Unspecified Mood Disorder
+Posttraumatic Stress Disorder
+Cannabis Use Disorder
+Stimulant Use Disorder
+
+In conclusion, it is my opinion that Mr. Simmons is a fair candidate for diversion only under the conditions that a program integrates psychotherapy services, psychiatric treatment, substance treatment, and case management.
+
+Respectfully submitted,
+Francheska Bidot Rodriguez, Ph.D.
+FIFTH AVENUE FORENSICS
+Licensed Clinical Psychologist</script>
+  <script type="text/plain" id="bipolar-ex-1">Here is Example Report 1 for formatting reference:
+
+KINGS COUNTY MENTAL HEALTH COURT
+FORENSIC PSYCHOLOGICAL EVALUATION
+MATTHEW LEE
+
+Shlomit Levy, LCSW
+Project/Clinical Director
+Brooklyn Mental Health Court
+
+Date of Report: December 5, 2025
+Date of Exam: November 3, 2025
+
+INTRODUCTION
+
+I, Francheska Bidot Rodriguez, Ph.D., performed a psychiatric examination of Mr. Matthew Lee.
+
+Mr. Lee is currently charged with assault in the second and third degree, attempted assault in the second and third degree, and menacing in the second degree stemming from an incident that occurred on September 5, 2023. He is additionally charged with assault in the second and third degree, attempted assault in the second degree, and menacing in the second and third degree stemming from a separate incident that occurred on January 12, 2024.
+
+Mr. Lee is detained at Rikers Island.
+
+RELEVANT HISTORY
+
+Mr. Matthew Lee is a single, 34-year-old African American man, born June 15, 1992, in Los Angeles, CA. He was raised by his grandmother in Brooklyn, NY, who adopted him at a young age. He grew up with three older siblings and one younger sibling. He described his childhood as "strict." He did not report any physical, emotional, or sexual abuse during childhood.
+
+Mr. Lee reported that he had no academic challenges or behavior issues prior to college. His formal education concluded at the college level; he withdrew from Danville Community College due to a decline in academic performance.
+
+Regarding his work history, Mr. Lee reported having worked as a barista at both Starbucks and Coffee Cake Corner, each for several years. Prior to his arrest, he was employed as a bicycle mechanic for Citi Bikes.
+
+Mr. Lee did not report having any ongoing medical conditions. He stated that at the age of 18 or 19, he was involved in a motorbike accident resulting in a hip replacement.
+
+Mr. Lee did not report a history of substance use throughout his life.
+
+Mr. Lee's psychiatric history includes three court-mandated hospitalizations for CPL 730 evaluations at Kirby Forensic Psychiatric Center in 2011, Mid-Hudson Forensic Psychiatric Center, and Central New York Psychiatric Center between 2024 to 2025. He was found fit to proceed during each evaluation.
+
+He has a prior history of diagnoses including schizophrenia, PTSD, and bipolar I disorder. He reported that the PTSD diagnosis was related to his emotional response following the loss of his grandmother in 2014. He reported no history of self-harming or suicide attempts.
+
+Mr. Lee reported participating in an outpatient program through the Jewish Board Brooklyn REAL PROS, graduating in 2019. He is currently prescribed Abilify at Rikers Island.
+
+Mr. Lee acknowledged being previously arrested approximately 15 times and incarcerated 10 or 11 times.
+
+THE INSTANT OFFENSES
+
+According to the criminal complaint, on September 5, 2023, Mr. Lee allegedly verbally assaulted the informant using derogatory terms, threatened to murder him, and grabbed a stool, swinging it at the informant's body. On January 12, 2024, Mr. Lee allegedly struck the informant in the face with a blunt object, causing lacerations and loss of teeth.
+
+When asked about the alleged incidents, Mr. Lee acknowledged both incidents but stated that they did not occur as written. He asserted that the first incident was an act of self-defense. He stated that at the time of both incidents, he was not using any substances and was not compliant with his prescribed medication.
+
+MENTAL STATUS EXAMINATION
+
+Mr. Lee is a 34-year-old African American male. He presented as well-groomed and dressed in jail issued garb. He was pleasant and engaged. He described his mood as "very well" and "good." His affect was neutral and generally appropriate. His responses were semi-tangential but did not require intensive redirection. Mr. Lee denied any suicidal or homicidal ideation. No evidence of active psychosis was elicited.
+
+Mr. Lee was alert and oriented to person, place, time, and situation. His attention and concentration were adequate. Memory appeared partially intact. His insight into his psychiatric condition was poor. He appeared to be a poor to fair historian.
+
+RISK ASSESSMENT
+
+A risk assessment is a comprehensive analysis of an individual's potential for future violent behavior.
+
+Mr. Lee presents with the following aggravating factors for dangerousness:
+Severe mental illness
+Prior criminal history
+Lack of insight into his mental illness
+History of noncompliance with psychotropic medication
+Limited awareness of criminal behavior and consequences
+
+Mitigating factors reducing the risk for violence include:
+Current medication compliance
+Willingness to engage in treatment
+Familial support
+Absence of substance use
+
+DIAGNOSIS AND FORMULATION
+
+Bipolar Disorder
+Other Specified Trauma-and Stressor-Related Disorder
+
+In conclusion, it is my opinion that Mr. Lee is a fair candidate for diversion only under the conditions that a program integrates psychotherapy services, psychiatric treatment, and case management.
+
+Respectfully submitted,
+Francheska Bidot Rodriguez, Ph.D.
+FIFTH AVENUE FORENSICS
+Licensed Clinical Psychologist</script>
+  <script type="text/plain" id="bipolar-ex-2">Here is Example Report 2 for formatting reference:
+
+KINGS COUNTY MENTAL HEALTH COURT
+FORENSIC PSYCHOLOGICAL EVALUATION
+RAFAEL GONZALEZ
+
+Shlomit Levy, LCSW
+Project/Clinical Director
+Brooklyn Mental Health Court
+
+Date of Report: November 11, 2025
+Date of Exam: October 7, 2025
+
+INTRODUCTION
+
+I, Francheska Bidot Rodriguez, Ph.D., performed a psychiatric examination of Mr. Rafael Gonzalez.
+
+Mr. Gonzalez is currently charged with theft of services, trespass, assault in the second and third degree, obstructing governmental administration in the second degree, and attempted assault in the third degree stemming from an incident on November 6, 2024, and assault charges stemming from an incident on March 20, 2025.
+
+RELEVANT HISTORY
+
+Mr. Rafael Gonzalez is a single, 24-year-old African American man, born October 28, 2000, in the Bronx, NY. He reportedly tested positive for substances at birth. Mr. Gonzalez was raised by his adoptive mother. He grew up in a household with five other children. He shared that he had a difficult childhood marked by instances of physical abuse and neglect. At the age of eleven, he was removed from his adoptive mother's care and spent time in group homes and youth shelters.
+
+Mr. Gonzalez' formal education concluded in the eleventh grade. He described having an IEP since early childhood due to behavioral challenges. He reported that he often engaged in physical altercations with peers. He had to discontinue education due to becoming homeless.
+
+Regarding his work history, Mr. Gonzalez worked as a porter, cashier, and stock boy. He is currently working as a porter at the Bronx Zoo. His longest job was two years as a porter.
+
+Mr. Gonzalez mentioned a thyroid issue as a child and had broken his jaw during an altercation when incarcerated.
+
+Mr. Gonzalez' substance use history is significant for daily cannabis consumption beginning at age 22. He consumes about two to three 50 mg THC edibles a day.
+
+Mr. Gonzalez' psychiatric history includes a prior diagnosis of bipolar and ADHD as a child and more recently schizoaffective disorder, bipolar type. He has been psychiatrically hospitalized for symptoms of mania and aggression. He has no history of self-harming or suicide attempts. Currently, he is taking Hydroxyzine, Lithium, and Zyprexa, has monthly appointments with his psychiatrist, and attends therapy weekly.
+
+Mr. Gonzalez has a history of multiple arrests related to domestic violence charges.
+
+REVIEW OF AVAILABLE PSYCHIATRIC RECORDS
+
+Medical Records from Bronx-Lebanon Hospital Center indicate Mr. Gonzalez was evaluated at the age of seven after he threatened to kill his seven-year-old brother. He was administered the WISC-IV, WRAT-IV, and Roberts Apperception Test. Results indicated significant difficulties with cognitive tasks.
+
+Medical records from Revcore indicated symptoms of depression and mania. Progress notes from April 23, 2025, indicated that with consistent medication adherence, he reported feeling stable.
+
+THE INSTANT OFFENSE
+
+According to the criminal complaint, on November 6, 2024, Mr. Gonzalez jumped over a turnstile and during the officer's attempt to detain him, he delivered a headbutt to the officer's face, resulting in a laceration requiring five sutures. On March 20, 2025, Mr. Gonzalez hit the informant on the face with a closed fist causing a laceration above the lip.
+
+When questioned about the November incident, Mr. Gonzalez acknowledged jumping the turnstile. He explained that he experienced a "blackout" during which he lost awareness. Regarding the March incident, he stated that he was in the hospital because he was "feeling manic" and accidentally struck a nurse in a moment of frustration.
+
+MENTAL STATUS EXAMINATION
+
+Mr. Gonzalez presented as a 24-year-old African American male. He was well-groomed. He was pleasant and engaged. He demonstrated restlessness and rapid, tangential thought processes suggestive of flight of ideas. He had difficulty remaining seated. He required redirection at times but responded well to cues. He reported ingestion of a 50 mg THC edible several hours prior to the evaluation.
+
+Mr. Gonzalez described his mood as "okay." His affect was broad and generally appropriate. He denied any suicidal or homicidal ideations. No evidence of active psychosis was elicited.
+
+Mr. Gonzalez was alert and oriented to person, place, time, and situation. His attention and concentration were variable. Memory appeared grossly intact. His insight was fair; however, his understanding of the effects of cannabis use on his mental state was limited. Judgment appeared mildly impaired.
+
+RISK ASSESSMENT
+
+A risk assessment is a comprehensive analysis of an individual's potential for future violent behavior.
+
+Mr. Gonzalez presents with the following aggravating factors for dangerousness:
+Severe mental illness
+Lack of social support
+History of aggression
+Chronic criminal involvement
+
+Mitigating factors reducing the risk for violence include:
+Compliance with his medication
+Current treatment engagement
+Familial Support
+
+DIAGNOSIS AND FORMULATION
+
+Bipolar I Disorder
+Other Trauma Disorder-and Stressor-Related Disorder
+Attention Deficit Hyperactivity Disorder
+Cannabis Use Disorder
+
+In conclusion, it is my opinion that Mr. Gonzalez is a fair candidate for diversion only under the conditions that a program integrates psychotherapy services, psychoeducation, psychiatric treatment, substance use services, and case management.
+
+Respectfully submitted,
+Francheska Bidot Rodriguez, Ph.D.
+FIFTH AVENUE FORENSICS
+Licensed Clinical Psychologist</script>
+  <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6/dist/amazon-cognito-identity.min.js"></script>
+  <script>
+    const STREAM_ENDPOINT = 'https://4voqfpwhf7tiyzxpqcejedrtii0fyhrv.lambda-url.us-east-2.on.aws/';
+    const COGNITO_USER_POOL_ID = 'us-east-2_gCTbH7Sek';
+    const COGNITO_CLIENT_ID = 'k8bk5a0462fmoobi07k4gplat';
+    const poolData = { UserPoolId: COGNITO_USER_POOL_ID, ClientId: COGNITO_CLIENT_ID };
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    let currentUser = null;
+    let idToken = null;
+    let conversationHistory = [];
+    let cognitoUserForPasswordChange = null;
+    let userAttributesForPasswordChange = null;
+    let basePromptSent = false;
+    let examplesSent = false;
+    let isSending = false;
+
+    // Base prompt stored as a constant
+    const BASE_PROMPT = document.getElementById('base-prompt-data') ? document.getElementById('base-prompt-data').textContent : '';
+
+    // Load examples from hidden script tags
+    const EXAMPLES_DATA = {
+      schizophrenia: [
+        document.getElementById('schiz-ex-1') ? document.getElementById('schiz-ex-1').textContent : '',
+        document.getElementById('schiz-ex-2') ? document.getElementById('schiz-ex-2').textContent : ''
+      ].filter(x => x),
+      ptsd: [
+        document.getElementById('ptsd-ex-1') ? document.getElementById('ptsd-ex-1').textContent : '',
+        document.getElementById('ptsd-ex-2') ? document.getElementById('ptsd-ex-2').textContent : '',
+        document.getElementById('ptsd-ex-3') ? document.getElementById('ptsd-ex-3').textContent : ''
+      ].filter(x => x),
+      bipolar: [
+        document.getElementById('bipolar-ex-1') ? document.getElementById('bipolar-ex-1').textContent : '',
+        document.getElementById('bipolar-ex-2') ? document.getElementById('bipolar-ex-2').textContent : ''
+      ].filter(x => x)
+    };
+
+    window.onload = function() {
+      const cognitoUser = userPool.getCurrentUser();
+      if (cognitoUser) {
+        cognitoUser.getSession((err, session) => {
+          if (err || !session.isValid()) return;
+          currentUser = cognitoUser;
+          idToken = session.getIdToken().getJwtToken();
+          showChat(cognitoUser.getUsername());
         });
       }
+    };
 
-      function showPasswordChangeSection() { document.getElementById('loginSection').style.display = 'none'; document.getElementById('passwordChangeSection').style.display = 'block'; }
-      function backToLogin() { document.getElementById('passwordChangeSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; }
+    function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('loginError');
+      const loginBtn = document.getElementById('loginBtn');
+      if (!email || !password) { errorDiv.textContent = 'Please enter both email and password'; errorDiv.style.display = 'block'; return; }
+      errorDiv.style.display = 'none';
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in...';
+      const authDetails = new AmazonCognitoIdentity.AuthenticationDetails({ Username: email, Password: password });
+      const cognitoUser = new AmazonCognitoIdentity.CognitoUser({ Username: email, Pool: userPool });
+      cognitoUser.authenticateUser(authDetails, {
+        onSuccess: function(result) { currentUser = cognitoUser; idToken = result.getIdToken().getJwtToken(); loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; showChat(email); },
+        onFailure: function(err) { loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; errorDiv.textContent = err.message || 'Authentication failed'; errorDiv.style.display = 'block'; },
+        newPasswordRequired: function(userAttributes) { cognitoUserForPasswordChange = cognitoUser; delete userAttributes.email_verified; delete userAttributes.email; userAttributesForPasswordChange = userAttributes; loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; showPasswordChangeSection(); }
+      });
+    }
 
-      function completeNewPassword() {
-        const newPw = document.getElementById('newPassword').value;
-        const confirmPw = document.getElementById('confirmPassword').value;
-        const errorDiv = document.getElementById('passwordError');
-        const btn = document.getElementById('changePasswordBtn');
-        if (!newPw || !confirmPw) { errorDiv.textContent = 'Please fill in both fields'; errorDiv.style.display = 'block'; return; }
-        if (newPw !== confirmPw) { errorDiv.textContent = 'Passwords do not match'; errorDiv.style.display = 'block'; return; }
-        btn.disabled = true; btn.textContent = 'Setting password...';
-        cognitoUserForPasswordChange.completeNewPasswordChallenge(newPw, userAttributesForPasswordChange, {
-          onSuccess: function(result) { currentUser = cognitoUserForPasswordChange; idToken = result.getIdToken().getJwtToken(); btn.disabled = false; btn.textContent = 'Set Password'; document.getElementById('passwordChangeSection').style.display = 'none'; showChat(cognitoUserForPasswordChange.getUsername()); },
-          onFailure: function(err) { btn.disabled = false; btn.textContent = 'Set Password'; errorDiv.textContent = err.message; errorDiv.style.display = 'block'; }
-        });
+    function showPasswordChangeSection() { document.getElementById('loginSection').style.display = 'none'; document.getElementById('passwordChangeSection').style.display = 'block'; }
+    function backToLogin() { document.getElementById('passwordChangeSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; }
+
+    function completeNewPassword() {
+      const newPw = document.getElementById('newPassword').value;
+      const confirmPw = document.getElementById('confirmPassword').value;
+      const errorDiv = document.getElementById('passwordError');
+      const btn = document.getElementById('changePasswordBtn');
+      if (!newPw || !confirmPw) { errorDiv.textContent = 'Please fill in both fields'; errorDiv.style.display = 'block'; return; }
+      if (newPw !== confirmPw) { errorDiv.textContent = 'Passwords do not match'; errorDiv.style.display = 'block'; return; }
+      btn.disabled = true; btn.textContent = 'Setting password...';
+      cognitoUserForPasswordChange.completeNewPasswordChallenge(newPw, userAttributesForPasswordChange, {
+        onSuccess: function(result) { currentUser = cognitoUserForPasswordChange; idToken = result.getIdToken().getJwtToken(); btn.disabled = false; btn.textContent = 'Set Password'; document.getElementById('passwordChangeSection').style.display = 'none'; showChat(cognitoUserForPasswordChange.getUsername()); },
+        onFailure: function(err) { btn.disabled = false; btn.textContent = 'Set Password'; errorDiv.textContent = err.message; errorDiv.style.display = 'block'; }
+      });
+    }
+
+    function showChat(email) { document.getElementById('loginSection').style.display = 'none'; document.getElementById('chatSection').style.display = 'flex'; document.getElementById('userEmail').textContent = 'Logged in as: ' + email; conversationHistory = []; updateToolbarStatus(); }
+
+    function logout() { if (currentUser) currentUser.signOut(); currentUser = null; idToken = null; conversationHistory = []; basePromptSent = false; examplesSent = false; updateToolbarStatus(); document.getElementById('chatSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Welcome! Use the toolbar below to set up your session.</div>'; document.getElementById('diagnosisSelect').value = ''; }
+
+    function resetConversation() { conversationHistory = []; basePromptSent = false; examplesSent = false; updateToolbarStatus(); document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Session reset. Use the toolbar to start again.</div>'; document.getElementById('diagnosisSelect').value = ''; }
+
+    function updateToolbarStatus() {
+      document.getElementById('basePromptStatus').textContent = basePromptSent ? 'Sent' : 'Not Sent';
+      document.getElementById('basePromptStatus').className = 'status-badge ' + (basePromptSent ? 'active' : 'inactive');
+      document.getElementById('insertBasePromptBtn').disabled = basePromptSent;
+      document.getElementById('examplesStatus').textContent = examplesSent ? 'Sent' : 'Not Sent';
+      document.getElementById('examplesStatus').className = 'status-badge ' + (examplesSent ? 'active' : 'inactive');
+      document.getElementById('insertExamplesBtn').disabled = examplesSent;
+    }
+
+    async function insertBasePrompt() {
+      if (basePromptSent || isSending) return;
+      await sendProgrammaticMessage(BASE_PROMPT, 'Base prompt sent');
+      basePromptSent = true;
+      updateToolbarStatus();
+    }
+
+    async function insertExamples() {
+      if (examplesSent || isSending) return;
+      const diagnosis = document.getElementById('diagnosisSelect').value;
+      if (!diagnosis) { alert('Please select a disorder category first.'); return; }
+      if (!basePromptSent) { alert('Please insert the base prompt first (Step 1).'); return; }
+      const examples = EXAMPLES_DATA[diagnosis];
+      if (!examples || examples.length === 0) { alert('No examples found for this diagnosis.'); return; }
+      for (let i = 0; i < examples.length; i++) {
+        const label = 'Example ' + (i + 1) + ' of ' + examples.length;
+        await sendProgrammaticMessage(examples[i], label + ' sent');
       }
+      examplesSent = true;
+      updateToolbarStatus();
+    }
 
-      function showChat(email) { document.getElementById('loginSection').style.display = 'none'; document.getElementById('chatSection').style.display = 'flex'; document.getElementById('userEmail').textContent = 'Logged in as: ' + email; conversationHistory = []; }
-
-      function logout() { if (currentUser) currentUser.signOut(); currentUser = null; idToken = null; conversationHistory = []; document.getElementById('chatSection').style.display = 'none'; document.getElementById('loginSection').style.display = 'block'; document.getElementById('chatContainer').innerHTML = '<div class="message assistant">Welcome! I\'m Claude, ready to help. What would you like to know?</div>'; }
-
-      async function sendMessage() {
-        if (!currentUser || !idToken) { alert('Session expired. Please log in again.'); logout(); return; }
-        const input = document.getElementById('messageInput');
-        const message = input.value.trim();
-        if (!message) return;
-        const chatContainer = document.getElementById('chatContainer');
-        const loading = document.getElementById('loading');
-        const userDiv = document.createElement('div');
-        userDiv.className = 'message user';
-        userDiv.textContent = message;
-        chatContainer.appendChild(userDiv);
-        input.value = '';
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-        loading.style.display = 'block';
-
-        const assistantDiv = document.createElement('div');
-        assistantDiv.className = 'message assistant';
-        assistantDiv.innerHTML = '';
-        chatContainer.appendChild(assistantDiv);
-
-        let fullText = '';
-
-        try {
-          const response = await fetch(STREAM_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': idToken },
-            body: JSON.stringify({ message: message, conversationHistory: conversationHistory })
-          });
-
-          loading.style.display = 'none';
-
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          let buffer = '';
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n\n');
-            buffer = lines.pop();
-
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                try {
-                  const data = JSON.parse(line.slice(6));
-                  if (data.type === 'delta') {
-                    fullText += data.text;
-                    assistantDiv.innerHTML = marked.parse(fullText);
-                    chatContainer.scrollTop = chatContainer.scrollHeight;
-                  } else if (data.type === 'done') {
-                    conversationHistory = data.updatedHistory;
-                  } else if (data.type === 'error') {
-                    assistantDiv.textContent = 'Error: ' + data.error;
-                  }
-                } catch (e) { /* skip malformed */ }
-              }
+    async function sendProgrammaticMessage(text, statusLabel) {
+      if (!currentUser || !idToken) { alert('Session expired.'); logout(); return; }
+      isSending = true;
+      const chatContainer = document.getElementById('chatContainer');
+      const loading = document.getElementById('loading');
+      const sysDiv = document.createElement('div');
+      sysDiv.className = 'message system';
+      sysDiv.textContent = statusLabel || 'Auto-sending...';
+      chatContainer.appendChild(sysDiv);
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user auto-sent';
+      userDiv.textContent = text.length > 200 ? text.substring(0, 200) + '... [' + text.length + ' chars]' : text;
+      chatContainer.appendChild(userDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      loading.style.display = 'block';
+      const assistantDiv = document.createElement('div');
+      assistantDiv.className = 'message assistant';
+      assistantDiv.innerHTML = '';
+      chatContainer.appendChild(assistantDiv);
+      let fullText = '';
+      try {
+        const response = await fetch(STREAM_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': idToken }, body: JSON.stringify({ message: text, conversationHistory: conversationHistory }) });
+        loading.style.display = 'none';
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n\n');
+          buffer = lines.pop();
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.type === 'delta') { fullText += data.text; assistantDiv.innerHTML = marked.parse(fullText); chatContainer.scrollTop = chatContainer.scrollHeight; }
+                else if (data.type === 'done') { conversationHistory = data.updatedHistory; }
+                else if (data.type === 'error') { assistantDiv.textContent = 'Error: ' + data.error; }
+              } catch (e) { }
             }
           }
-
-          if (!fullText) {
-            assistantDiv.textContent = 'No response received. Please try again.';
-          }
-        } catch (error) {
-          loading.style.display = 'none';
-          assistantDiv.textContent = 'Sorry, there was an error connecting to the server.';
         }
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-    </script>
-  </body>
+        if (!fullText) { assistantDiv.textContent = 'No response received.'; }
+      } catch (error) { loading.style.display = 'none'; assistantDiv.textContent = 'Error connecting to server.'; }
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      isSending = false;
+    }
+
+    async function sendMessage() {
+      if (!currentUser || !idToken) { alert('Session expired.'); logout(); return; }
+      if (isSending) return;
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      if (!message) return;
+      isSending = true;
+      const chatContainer = document.getElementById('chatContainer');
+      const loading = document.getElementById('loading');
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user';
+      userDiv.textContent = message;
+      chatContainer.appendChild(userDiv);
+      input.value = '';
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      loading.style.display = 'block';
+      const assistantDiv = document.createElement('div');
+      assistantDiv.className = 'message assistant';
+      assistantDiv.innerHTML = '';
+      chatContainer.appendChild(assistantDiv);
+      let fullText = '';
+      try {
+        const response = await fetch(STREAM_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': idToken }, body: JSON.stringify({ message: message, conversationHistory: conversationHistory }) });
+        loading.style.display = 'none';
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n\n');
+          buffer = lines.pop();
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.type === 'delta') { fullText += data.text; assistantDiv.innerHTML = marked.parse(fullText); chatContainer.scrollTop = chatContainer.scrollHeight; }
+                else if (data.type === 'done') { conversationHistory = data.updatedHistory; }
+                else if (data.type === 'error') { assistantDiv.textContent = 'Error: ' + data.error; }
+              } catch (e) { }
+            }
+          }
+        }
+        if (!fullText) { assistantDiv.textContent = 'No response received.'; }
+      } catch (error) { loading.style.display = 'none'; assistantDiv.textContent = 'Error connecting to server.'; }
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      isSending = false;
+    }
+  </script>
+  <script type="text/plain" id="base-prompt-data">You are a report-writing assistant for Mental Health Court forensic evaluations. Your role is to convert standardized evaluation notes into a completed court report that matches the structure, section order, tone, and narrative style of the example reports I will provide.
+
+This process will occur across multiple messages. First, I will provide one or more example reports. These examples exist only to demonstrate formatting, organization, section headers, writing style, and tone. You should not extract facts, diagnoses, conclusions, recommendations, or reasoning from them, and you should not begin drafting the report at this stage.
+
+After the examples, I will provide the standardized evaluation notes using a fixed template. These notes are the only source of content for the report. Every factual statement in the report must be directly traceable to the notes.
+
+You must not begin writing the report until the standardized notes are provided.
+
+Do not add, infer, interpret, or supplement any information. Do not generate new diagnoses, risk factors, recommendations, or opinions. Your task is strictly to translate and format what already exists in the notes into the court's standard report style.
+
+You may synthesize and organize information already contained in the notes into clear narrative paragraphs, but you may not introduce any new factual content or evaluative reasoning.
+
+All historical and background information must be written using appropriate forensic attribution language. Information derived from self-report must be framed using phrases such as "the examinee reported," "he stated," "she described," or similar language. Information derived from records must be attributed using phrases such as "according to available records," or similar language if specified in the notes. Do not present historical information as an independently verified fact unless the notes explicitly indicate that it is documented in records. Use varied but professionally appropriate attribution language and avoid repetitive phrasing.
+
+If information is expected based on the example report format but is missing from the notes, insert a bold placeholder exactly as INSERT ___ HERE rather than filling in or guessing. If it is unclear whether information comes from self-report or records, insert INSERT SOURCE HERE.
+
+When you write the report, begin directly with the RELEVANT HISTORY section.
+
+The report must follow this exact section order:
+
+RELEVANT HISTORY
+THE INSTANT OFFENSE(S)
+MENTAL STATUS EXAMINATION
+RISK ASSESSMENT
+
+RELEVANT HISTORY
+
+This section should be written as a sequence of narrative paragraphs that consolidate the standardized notes in the following general order, using only information provided in the notes and omitting entire paragraphs if unsupported:
+
+demographic information and living situation
+family background and childhood experiences
+educational history
+occupational history
+substance use history and treatment
+mental health history and treatment
+medical history
+prior criminal justice involvement and history of violence
+
+All content must be attributed appropriately using forensic distancing language.
+
+If the notes include a separate review of psychiatric or medical records, include a subsection titled:
+
+REVIEW OF AVAILABLE PSYCHIATRIC RECORDS
+
+If no such content appears in the notes, omit this subsection entirely.
+
+THE INSTANT OFFENSE(S)
+
+This section should present the alleged conduct first as described in the criminal complaint or other records, using appropriate attribution language. This should be followed by the examinee's account of the incident(s), clearly attributed to self-report.
+
+Discussion of mental state at the time of the offense, motivation or intent, remorse, or willingness to plead guilty or participate in treatment should appear only if explicitly documented in the notes. If any of these elements are missing, insert the appropriate bold placeholder.
+
+Do not speculate or interpret beyond what is written in the notes.
+
+MENTAL STATUS EXAMINATION
+
+This section should be written as a narrative paragraph in the same style as the examples. It should cover:
+
+appearance and behavior
+alertness and orientation
+mood and affect
+speech and language
+thought processes and content
+psychotic symptoms if present
+suicidal or homicidal ideation
+insight and judgment
+understanding of legal proceedings
+
+Only include domains that are present in the notes. If a domain is absent, insert INSERT [DOMAIN] HERE.
+
+RISK ASSESSMENT
+
+This section should begin with the standard explanatory paragraph used in the example reports describing the purpose and limits of risk assessment. This boilerplate language is permitted.
+
+Following this paragraph, list aggravating and mitigating factors exactly as they appear in the notes. Do not add or infer any factors. If these lists are missing, insert INSERT AGGRAVATING FACTORS HERE or INSERT MITIGATING FACTORS HERE as appropriate.
+
+Do not invent or complete the signature block. If signature information is missing from the notes, insert INSERT SIGNATURE BLOCK HERE.
+
+When the time comes to produce the report, output only the report text. Do not include commentary, explanations, or meta-language.
+
+If you have not yet received the standardized notes, do nothing except acknowledge receipt of the example reports. Do not outline, summarize, paraphrase, or draft any portion of the report until the notes are provided.</script>
+</body>
 </html>
