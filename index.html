@@ -1017,9 +1017,10 @@ Licensed Clinical Psychologist</script>
       if (!basePromptSent) { alert('Please insert the base prompt first (Step 1).'); return; }
       const examples = EXAMPLES_DATA[diagnosis];
       if (!examples || examples.length === 0) { alert('No examples found for this diagnosis.'); return; }
-      // Combine ALL examples into ONE message
-      const combined = examples.join('\n\n---\n\n');
-      await sendProgrammaticMessage(combined, examples.length + ' example reports sent as one message');
+      // Send examples one at a time to avoid size limits
+      for (let i = 0; i < examples.length; i++) {
+        await sendProgrammaticMessage(examples[i], 'Example ' + (i + 1) + ' of ' + examples.length + ' sent');
+      }
       examplesSent = true;
       updateToolbarStatus();
     }
