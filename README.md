@@ -1,14 +1,16 @@
 # Forensic AI Report Generator
 
-A web application built for [Fifth Avenue Forensics](https://fifthavenueforensics.com/) that helps forensic psychologists draft structured psychiatric evaluation reports for court proceedings, with the clinician kept in control of every factual claim.
+A production web application built for [Fifth Avenue Forensics](https://fifthavenueforensics.com/) that helps forensic psychologists draft psychiatric evaluation reports for court proceedings. The application uses Anthropic's Claude through Amazon Bedrock to generate structured first drafts while keeping the clinician in control of every factual claim.
 
-I built and deployed it as the firm's sole technical resource. It runs entirely on AWS, which was a deliberate choice: because the tool handles patient notes, the architecture had to meet HIPAA requirements, so a good part of the work was researching those requirements and the relevant legal guidelines and setting up the AWS services to match.
+I designed, built, and deployed the application as the firm's sole technical resource. The application consists of a single-page frontend hosted on AWS Amplify, Amazon Cognito for clinician authentication, and an AWS Lambda backend that securely invokes Claude through Amazon Bedrock while streaming responses back to the browser.
 
 ## Background
 
-Forensic psychiatric evaluations for the courts follow a strict format: relevant history, instant offenses, mental status examination, and risk assessment, each with its own conventions for tone, attribution, and structure. Producing a first draft from raw interview notes is slow, repetitive work, and the stakes (court testimony, parole and competency determinations) leave no room for invented facts.
+Forensic psychiatric evaluations for the courts follow a strict format: relevant history, instant offense, mental status examination, and risk assessment, each with its own conventions for tone, attribution, and structure. Producing these reports from raw interview notes is slow, repetitive work, and the stakes (court testimony, parole decisions, competency evaluations, and other legal proceedings) leave no room for invented facts.
 
-The aim was to take the repetitive drafting off the clinician's plate without ever letting the model add, infer, or soften anything they did not write.
+Because these evaluations contain protected health information, clinicians could not rely on consumer AI tools or a generic language model interface. Instead, the practice required a secure, authenticated application that standardized prompts, managed report templates, accepted evaluation notes through a controlled workflow, and invoked Claude through Amazon Bedrock within a HIPAA-eligible AWS environment. 
+
+The goal was to reduce the repetitive work of drafting while ensuring the model never added, inferred, or softened any information the clinician did not provide.
 
 ## How it works
 
@@ -19,50 +21,56 @@ The clinician moves through a deliberate, staged workflow rather than a freeform
 3. **Paste the standardized evaluation notes**, which are the sole source of factual content.
 4. **Generate a structured first draft**, streamed back section by section and rendered as formatted text for review and editing.
 
-The staging is intentional. Examples are provided strictly for format, and the model is instructed not to begin drafting until the notes arrive, so style and substance never bleed together.
+Example reports always come before the notes. The model is instructed not to begin drafting until the clinician's notes are supplied, which keeps formatting separate from factual content.
 
 ## Design principles
 
-The system prompt does most of the careful work, and it is built around clinician oversight rather than automation:
+The system prompt is designed around clinician oversight rather than automation:
 
-- **Every factual statement must be traceable to the notes.** The model may organize and synthesize what is already there, but may not introduce new diagnoses, risk factors, recommendations, or reasoning.
-- **Forensic attribution is enforced.** Self-reported information is framed as such ("the examinee reported"), record-derived information is attributed to records, and nothing is presented as independently verified unless the notes say so.
-- **Missing information is flagged, not filled.** Where the format expects content the notes do not supply, the draft inserts an explicit `INSERT ___ HERE` placeholder instead of guessing, so gaps surface for the clinician rather than hiding.
+- **Every factual statement must be traceable to the evaluation notes.** The model may organize and synthesize existing information but may not introduce new diagnoses, risk factors, recommendations, or reasoning.
+- **Forensic attribution is enforced.** Self-reported information is framed as such ("the examinee reported"), record-derived information is attributed to records, and nothing is presented as independently verified unless the notes explicitly support it.
+- **Missing information is flagged, not filled.** Where the report format expects content the notes do not supply, the draft inserts an explicit `INSERT ___ HERE` placeholder instead of guessing, so clinicians can catch gaps before finalizing.
 
-These choices are what make the tool usable in a setting where a hallucinated detail is not a bug but a liability.
+These design choices make the application usable in a forensic setting, where a hallucinated detail is a legal liability, not just a mistake.
 
 ## Architecture
 
-The whole system is built on Amazon Web Services (AWS), chosen specifically so that protected health information never leaves HIPAA-eligible infrastructure. Each service was selected to satisfy a particular compliance or workflow requirement, not just to make the app run.
+The stack runs entirely on Amazon Web Services (AWS), chosen so that protected health information never leaves HIPAA-eligible infrastructure. Each service was picked to meet a specific compliance or workflow need, not just to make the app run.
 
 ```
 Browser (single-page app)
-    |
+    │
     ├── Amazon Cognito ──── clinician authentication
-    |
+    │
     └── AWS Lambda (Function URL, streaming)
-              |
-              └── Amazon Bedrock ──── Claude
-    |
-  AWS Amplify ──── hosting + CI/CD
+            │
+            └── Amazon Bedrock ──── Claude
 ```
 
-- **Frontend**: Vanilla HTML/CSS/JavaScript single-page app, with disorder-specific templates and example reports embedded as inert data blocks.
-- **Authentication**: Amazon Cognito user pool, limiting access to authorized clinicians.
-- **Backend**: AWS Lambda exposed via a Function URL, calling Claude through Amazon Bedrock with responses streamed back to the browser.
-- **AI within AWS**: Claude is accessed through Amazon Bedrock rather than a third-party API, so the model runs inside AWS and evaluation notes never leave the HIPAA-eligible environment, with no data retention and no training on practice data.
-- **Deployment**: AWS Amplify (the app was deployed as `claude-dashboard`).
-- **Rendering**: Marked.js for Markdown output.
+AWS Amplify hosts the frontend and provides continuous deployment (CI/CD), separate from the runtime request path shown above.
+
+- **Frontend:** Vanilla HTML/CSS/JavaScript single-page application, with disorder-specific templates and example reports embedded as reference data.
+- **Authentication:** Amazon Cognito user pool limiting access to authorized clinicians.
+- **Backend:** AWS Lambda exposed through a Function URL, securely invoking Claude through Amazon Bedrock and streaming responses back to the browser.
+- **AI within AWS:** Claude runs through Amazon Bedrock rather than a third-party API, so evaluation notes stay inside the AWS environment. Practice data is not retained or used to train foundation models.
+- **Deployment:** AWS Amplify (deployed internally as `claude-dashboard`).
+- **Rendering:** Marked.js for Markdown output.
 
 ## Beyond the code
 
-The application shipped alongside the work that made it safe to use in practice:
+The project also included the operational work required to deploy the application within a clinical practice:
 
-- Researching HIPAA and the applicable legal guidelines and putting a Business Associate Agreement (BAA) in place with AWS to cover the infrastructure.
-- Rollout and onboarding across the practice for clinician users.
-- Internal documentation describing the data safeguards and the clinician-oversight model.
-- A client-facing brief prepared for court partners (including the Brooklyn Mental Health Court) explaining how AI was being used responsibly in the evaluation process.
+- Researched HIPAA requirements, evaluated HIPAA-eligible AWS services, designed the cloud architecture, and coordinated the Business Associate Agreement (BAA) required for deployment.
+- Rolled out the application and onboarded clinicians across the practice.
+- Wrote internal documentation describing the security model, deployment process, and clinician oversight workflow.
+- Prepared a client-facing brief for court partners, including the Brooklyn Mental Health Court, explaining how AI was incorporated responsibly into the evaluation process.
 
 ## Tech stack
 
-HTML/CSS/JavaScript (vanilla) · AWS Lambda · Amazon Cognito · Amazon Bedrock (Claude) · AWS Amplify · Marked.js
+**Frontend:** HTML · CSS · JavaScript (Vanilla)
+
+**Cloud:** AWS Lambda · Amazon Cognito · AWS Amplify
+
+**AI:** Amazon Bedrock · Anthropic Claude
+
+**Libraries:** Marked.js
