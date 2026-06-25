@@ -3,7 +3,7 @@ frontend:
   phases:
     build:
       commands:
-        - mkdir -p dist && cp index.html dist/index.html
+        - mkdir -p dist && cp index.html styles.css app.js dist/
   artifacts:
     baseDirectory: dist
     files:
