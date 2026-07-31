@@ -77,6 +77,10 @@
         </div>
         <div class="loading" id="loading"><span></span><span></span><span></span></div>
         <div id="report" class="report placeholder">Fill in the inputs and click Generate. The report will appear here.</div>
+        <div class="revise" id="reviseBar" style="display:none">
+          <input id="reviseInput" placeholder="Ask for changes, e.g. shorten the personal history, strengthen the formulation" onkeydown="reviseKeydown(event)">
+          <button class="primary" id="reviseBtn" onclick="revise()">Revise</button>
+        </div>
       </section>
     </div>
   </div>

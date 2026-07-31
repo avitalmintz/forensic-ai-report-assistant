@@ -15,6 +15,7 @@ let cognitoUserForPasswordChange = null, userAttributesForPasswordChange = null;
 let currentMode = 'evaluation';
 let isSending = false;
 let lastReportText = '';
+let chatHistory = [];   // case -> report -> revision turns, as returned by the backend
 
 const $ = (id) => document.getElementById(id);
 
@@ -80,10 +81,15 @@ function setMode(mode) {
   document.querySelectorAll('.mode').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
   $('panel-evaluation').style.display = mode === 'evaluation' ? 'block' : 'none';
   $('panel-mhc').style.display = mode === 'mhc' ? 'block' : 'none';
+  // A revision chain belongs to the mode that produced it.
+  chatHistory = [];
+  $('reviseBar').style.display = 'none';
 }
 
 function resetInputs() {
   ['interviewNotes','mhcNotes'].forEach(id => { if ($(id)) $(id).value = ''; });
+  chatHistory = [];
+  $('reviseBar').style.display = 'none'; $('reviseInput').value = '';
 }
 
 // ---- Generate ----------------------------------------------------------------
@@ -99,15 +105,11 @@ function buildPayload() {
   };
 }
 
-async function generate() {
-  if (isSending) return;
-  if (!currentUser || !idToken) { alert('Session expired.'); logout(); return; }
-  const payload = buildPayload();
-  const notesEmpty = currentMode === 'evaluation' ? !payload.inputs.interviewNotes.trim() : !payload.message.trim();
-  if (notesEmpty) { alert('Please paste the evaluation notes first.'); return; }
-
+// Shared streaming call. Streams the (re)generated report into the output pane and
+// keeps chatHistory in sync from the backend's done event.
+async function runStream(payload, btn, btnBusyLabel, btnIdleLabel) {
   isSending = true;
-  $('generateBtn').disabled = true; $('generateBtn').textContent = 'Generating...';
+  btn.disabled = true; btn.textContent = btnBusyLabel;
   $('loading').style.display = 'block';
   const report = $('report'); report.classList.remove('placeholder'); report.innerHTML = '';
   $('copyBtn').disabled = true; $('docxBtn').disabled = true;
@@ -124,35 +126,63 @@ async function generate() {
     if (!response.ok) {
       const t = await response.text().catch(() => '');
       report.textContent = `Server error ${response.status}. ${t.slice(0, 400)}`;
-      isSending = false; $('generateBtn').disabled = false; $('generateBtn').textContent = 'Generate Report';
-      return;
-    }
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '', gotError = false;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n\n'); buffer = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (data.type === 'delta') { lastReportText += data.text; report.innerHTML = marked.parse(lastReportText); report.scrollTop = report.scrollHeight; }
-          else if (data.type === 'error') { gotError = true; report.textContent = 'Error: ' + data.error; }
-        } catch (e) {}
+    } else {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '', gotError = false;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n'); buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const data = JSON.parse(line.slice(6));
+            if (data.type === 'delta') { lastReportText += data.text; report.innerHTML = marked.parse(lastReportText); report.scrollTop = report.scrollHeight; }
+            else if (data.type === 'done' && Array.isArray(data.updatedHistory)) { chatHistory = data.updatedHistory; }
+            else if (data.type === 'error') { gotError = true; report.textContent = 'Error: ' + data.error; }
+          } catch (e) {}
+        }
       }
+      if (lastReportText) {
+        $('copyBtn').disabled = false; $('docxBtn').disabled = false;
+        $('reviseBar').style.display = 'flex';
+      } else if (!gotError) report.textContent = 'No response received.';
     }
-    if (lastReportText) { $('copyBtn').disabled = false; $('docxBtn').disabled = false; }
-    else if (!gotError) report.textContent = 'No response received.';
   } catch (e) {
     $('loading').style.display = 'none';
     report.textContent = 'Error connecting to server.';
   }
   isSending = false;
-  $('generateBtn').disabled = false; $('generateBtn').textContent = 'Generate Report';
+  btn.disabled = false; btn.textContent = btnIdleLabel;
 }
+
+async function generate() {
+  if (isSending) return;
+  if (!currentUser || !idToken) { alert('Session expired.'); logout(); return; }
+  const payload = buildPayload();
+  const notesEmpty = currentMode === 'evaluation' ? !payload.inputs.interviewNotes.trim() : !payload.message.trim();
+  if (notesEmpty) { alert('Please paste the evaluation notes first.'); return; }
+  chatHistory = [];
+  $('reviseBar').style.display = 'none'; $('reviseInput').value = '';
+  await runStream(payload, $('generateBtn'), 'Generating...', 'Generate Report');
+}
+
+// Back-and-forth editing: send the prior conversation plus an edit request; the
+// backend streams back the complete revised report.
+async function revise() {
+  if (isSending) return;
+  const text = $('reviseInput').value.trim();
+  if (!text) return;
+  if (!chatHistory.length) { alert('Generate a report first.'); return; }
+  const payload = { mode: currentMode, history: chatHistory, message: text };
+  if (currentMode === 'mhc') payload.subtype = $('disorder').value;
+  $('reviseInput').value = '';
+  await runStream(payload, $('reviseBtn'), 'Revising...', 'Revise');
+}
+
+function reviseKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); revise(); } }
 
 // ---- Output actions ----------------------------------------------------------
 function copyReport() {

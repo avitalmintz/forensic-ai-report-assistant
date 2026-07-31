@@ -56,6 +56,11 @@ button.ghost:disabled { opacity:.5; cursor:not-allowed; }
 .report p { margin:10px 0; } .report ul, .report ol { margin:10px 0; padding-left:22px; }
 .report strong { font-weight:700; }
 
+/* Revise bar: back-and-forth editing after a report is generated */
+.revise { display:flex; gap:10px; padding:14px 22px; border-top:1px solid var(--line); background:#fff; }
+.revise input { flex:1; }
+.revise .primary { width:auto; padding:11px 22px; flex:none; }
+
 .loading { display:none; text-align:center; padding:22px; }
 .loading span { display:inline-block; width:8px; height:8px; background:var(--accent); border-radius:50%; margin:0 3px; animation:bounce 1.4s infinite; }
 .loading span:nth-child(2){animation-delay:.2s} .loading span:nth-child(3){animation-delay:.4s}
