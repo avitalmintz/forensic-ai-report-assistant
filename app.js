@@ -84,12 +84,14 @@ function setMode(mode) {
   // A revision chain belongs to the mode that produced it.
   chatHistory = [];
   $('reviseBar').style.display = 'none';
+  $('clarifyPanel').style.display = 'none'; $('clarifyPanel').innerHTML = '';
 }
 
 function resetInputs() {
   ['interviewNotes','mhcNotes'].forEach(id => { if ($(id)) $(id).value = ''; });
   chatHistory = [];
   $('reviseBar').style.display = 'none'; $('reviseInput').value = '';
+  $('clarifyPanel').style.display = 'none'; $('clarifyPanel').innerHTML = '';
 }
 
 // ---- Generate ----------------------------------------------------------------
@@ -103,6 +105,74 @@ function buildPayload() {
   return {
     mode: 'mhc', subtype: $('disorder').value, message: $('mhcNotes').value,
   };
+}
+
+// ---- Clarifications ----------------------------------------------------------
+// The backend flags genuinely ambiguous readings inline as [CLARIFY: question].
+// We render the report with numbered highlights and surface each question as a
+// card the clinician can answer (targeted AI fix) or dismiss (keep as written).
+const CLARIFY_SRC = '\\[CLARIFY:\\s*([^\\]]+)\\]';
+
+function getClarifications(text) {
+  const out = []; const re = new RegExp(CLARIFY_SRC, 'g'); let m;
+  while ((m = re.exec(text)) !== null) out.push({ marker: m[0], question: m[1].trim() });
+  return out;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderReportHtml(text) {
+  let n = 0;
+  const withRefs = text.replace(new RegExp(CLARIFY_SRC, 'g'), () => { n += 1; return ` **[?${n}]**`; });
+  return marked.parse(withRefs);
+}
+
+function renderClarifyPanel() {
+  const panel = $('clarifyPanel');
+  const items = getClarifications(lastReportText);
+  if (!items.length) { panel.style.display = 'none'; panel.innerHTML = ''; return; }
+  panel.style.display = 'block';
+  panel.innerHTML =
+    '<div class="clar-head">The report is complete, but the assistant was unsure about ' + items.length +
+    ' point' + (items.length > 1 ? 's' : '') + ' (marked [?] in the text). Answer to correct it, or dismiss to keep it as written.</div>' +
+    items.map((c, i) =>
+      '<div class="clar-card">' +
+        '<div class="clar-q"><span class="clar-num">?' + (i + 1) + '</span> ' + escapeHtml(c.question) + '</div>' +
+        '<div class="clar-actions">' +
+          '<input id="clarIn' + i + '" placeholder="Type the correct information">' +
+          '<button class="primary" onclick="applyClarification(' + i + ')">Apply</button>' +
+          '<button class="ghost clar-x" onclick="dismissClarification(' + i + ')" title="Keep as written">X</button>' +
+        '</div>' +
+      '</div>').join('');
+}
+
+async function applyClarification(i) {
+  if (isSending) return;
+  const items = getClarifications(lastReportText);
+  const c = items[i]; if (!c) return;
+  const answer = $('clarIn' + i).value.trim();
+  if (!answer) { $('clarIn' + i).focus(); return; }
+  const payload = {
+    mode: currentMode, history: chatHistory,
+    message: 'CLARIFICATION ANSWER. You flagged: "' + c.question + '" The clinician answers: "' + answer +
+             '". Apply only this correction, remove that [CLARIFY: ...] marker, and change nothing else. ' +
+             'Leave any other [CLARIFY: ...] markers exactly where they are.',
+  };
+  if (currentMode === 'mhc') payload.subtype = $('disorder').value;
+  await runStream(payload, $('reviseBtn'), 'Updating...', 'Revise');
+}
+
+function dismissClarification(i) {
+  if (isSending) return;
+  const items = getClarifications(lastReportText);
+  const c = items[i]; if (!c) return;
+  lastReportText = lastReportText.replace(c.marker, '').replace(/[ \t]+([.,;])/g, '$1');
+  const last = chatHistory[chatHistory.length - 1];
+  if (last && last.role === 'assistant') last.content = last.content.replace(c.marker, '');
+  $('report').innerHTML = renderReportHtml(lastReportText);
+  renderClarifyPanel();
 }
 
 // Shared streaming call. Streams the (re)generated report into the output pane and
@@ -148,6 +218,8 @@ async function runStream(payload, btn, btnBusyLabel, btnIdleLabel) {
       if (lastReportText) {
         $('copyBtn').disabled = false; $('docxBtn').disabled = false;
         $('reviseBar').style.display = 'flex';
+        report.innerHTML = renderReportHtml(lastReportText);
+        renderClarifyPanel();
       } else if (!gotError) report.textContent = 'No response received.';
     }
   } catch (e) {
@@ -166,6 +238,7 @@ async function generate() {
   if (notesEmpty) { alert('Please paste the evaluation notes first.'); return; }
   chatHistory = [];
   $('reviseBar').style.display = 'none'; $('reviseInput').value = '';
+  $('clarifyPanel').style.display = 'none'; $('clarifyPanel').innerHTML = '';
   await runStream(payload, $('generateBtn'), 'Generating...', 'Generate Report');
 }
 
